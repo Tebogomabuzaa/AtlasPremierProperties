@@ -128,6 +128,7 @@
     <Compile Include="Models\Entities\LeaseAgreement.cs" />
     <Compile Include="Models\Entities\Owners.cs" />
     <Compile Include="Models\Entities\Property.cs" />
+    <Compile Include="Models\Entities\Settlement.cs" />
     <Compile Include="Models\Entities\Tenant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
