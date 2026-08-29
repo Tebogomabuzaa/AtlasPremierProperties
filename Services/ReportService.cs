@@ -44,12 +44,12 @@ namespace AtlasPremierProperties.Services
                 conn.Open();
 
                 string sql =
-                    "SELECT pm.FirstName & ' ' & pm.LastName AS ManagerName, " +
-                    "COUNT(*) AS LeaseDays " +
-                    "FROM LeaseAgreements la " +
-                    "JOIN PropertyManagers pm ON la.ManagerID = pm.ManagerID " +
-                    "WHERE la.LeaseStartDate <= ? AND la.LeaseEndDate >= ? " +
-                    "GROUP BY pm.FirstName & ' ' & pm.LastName";
+                     "SELECT pm.FirstName & ' ' & pm.LastName AS ManagerName, " +
+                     "COUNT(*) AS LeaseDays " +
+                     "FROM LeaseAgreements AS la " +
+                     "INNER JOIN PropertyManagers AS pm ON la.ManagerID = pm.ManagerID " +
+                     "WHERE la.LeaseStartDate <= ? AND la.LeaseEndDate >= ? " +
+                     "GROUP BY pm.FirstName & ' ' & pm.LastName";
 
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
