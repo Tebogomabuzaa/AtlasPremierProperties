@@ -1,4 +1,4 @@
-using AtlasPremierProperties.Helpers;
+﻿using AtlasPremierProperties.Helpers;
 using AtlasPremierProperties.Models.Entities;
 using System;
 using System.Collections.Generic;
@@ -6,14 +6,14 @@ using System.Data.OleDb;
 
 namespace AtlasPremierProperties.Repositories
 {
-	public class OwnerRepository
-	{
+    public class OwnerRepository
+    {
         private readonly DatabaseHelper _db;
 
-		public OwnerRepository()
-		{
-			_db = new DatabaseHelper();
-		}
+        public OwnerRepository()
+        {
+            _db = new DatabaseHelper();
+        }
 
         public List<Owner> GetAll()
         {
