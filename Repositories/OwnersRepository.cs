@@ -6,18 +6,18 @@ using System.Data.OleDb;
 
 namespace AtlasPremierProperties.Repositories
 {
-    public class OwnerRepository
+    public class OwnersRepository
     {
         private readonly DatabaseHelper _db;
 
-        public OwnerRepository()
+        public OwnersRepository()
         {
             _db = new DatabaseHelper();
         }
 
-        public List<Owner> GetAll()
+        public List<Owners> GetAll()
         {
-            var list = new List<Owner>();
+            var list = new List<Owners>();
 
            
             using (var conn = _db.GetConnection())
@@ -31,7 +31,7 @@ namespace AtlasPremierProperties.Repositories
                 {
                     while (reader.Read())
                     {
-                        list.Add(new Owner
+                        list.Add(new Owners
                         {
                             OwnerID = Convert.ToInt32(reader["OwnerID"]),
                             FirstName = reader["FirstName"].ToString(),
@@ -46,7 +46,7 @@ namespace AtlasPremierProperties.Repositories
             return list;
         }
 
-        public Owner GetById(int id)
+        public Owners GetById(int id)
         {
             using (var conn = _db.GetConnection())
             {
@@ -61,7 +61,7 @@ namespace AtlasPremierProperties.Repositories
                     {
                         if (reader.Read())
                         {
-                            return new Owner
+                            return new Owners
                             {
                                 OwnerID = Convert.ToInt32(reader["OwnerID"]),
                                 FirstName = reader["FirstName"].ToString(),
@@ -78,7 +78,7 @@ namespace AtlasPremierProperties.Repositories
         }
 
         // Returns the new OwnerID
-        public int Add(Owner owner)
+        public int Add(Owners owners)
         {
             using (var conn = _db.GetConnection())
             {
@@ -88,7 +88,7 @@ namespace AtlasPremierProperties.Repositories
                 using (var checkCmd = new OleDbCommand(
                     "SELECT COUNT(*) FROM Owners WHERE EmailAddress = ?", conn))
                 {
-                    checkCmd.Parameters.AddWithValue("@email", owner.EmailAddress);
+                    checkCmd.Parameters.AddWithValue("@email", owners.EmailAddress);
 
                     if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0)
                         throw new Exception("An owner with this email address already exists.");
@@ -101,10 +101,10 @@ namespace AtlasPremierProperties.Repositories
 
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@firstName", owner.FirstName);
-                    cmd.Parameters.AddWithValue("@lastName", owner.LastName);
-                    cmd.Parameters.AddWithValue("@email", owner.EmailAddress);
-                    cmd.Parameters.AddWithValue("@phone", owner.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@firstName", owners.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", owners.LastName);
+                    cmd.Parameters.AddWithValue("@email", owners.EmailAddress);
+                    cmd.Parameters.AddWithValue("@phone", owners.PhoneNumber);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -117,7 +117,7 @@ namespace AtlasPremierProperties.Repositories
             }
         }
 
-        public void Update(Owner owner)
+        public void Update(Owners owners)
         {
             using (var conn = _db.GetConnection())
             {
@@ -132,11 +132,11 @@ namespace AtlasPremierProperties.Repositories
 
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@firstName", owner.FirstName);
-                    cmd.Parameters.AddWithValue("@lastName", owner.LastName);
-                    cmd.Parameters.AddWithValue("@email", owner.EmailAddress);
-                    cmd.Parameters.AddWithValue("@phone", owner.PhoneNumber);
-                    cmd.Parameters.AddWithValue("@id", owner.OwnerID);
+                    cmd.Parameters.AddWithValue("@firstName", owners.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", owners.LastName);
+                    cmd.Parameters.AddWithValue("@email", owners.EmailAddress);
+                    cmd.Parameters.AddWithValue("@phone", owners.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@id", owners.OwnerID);
 
                     cmd.ExecuteNonQuery();
                 }

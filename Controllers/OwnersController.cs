@@ -8,12 +8,12 @@ namespace AtlasPremierProperties.Controllers
     public class OwnersController : Controller
     {
 
-        private readonly OwnerRepository _ownerRepo;
+        private readonly OwnersRepository _ownerRepo;
 
 
         public OwnersController()
         {
-            _ownerRepo = new OwnerRepository();
+            _ownerRepo = new OwnersRepository();
         }
 
         // Lists all owners
@@ -31,16 +31,16 @@ namespace AtlasPremierProperties.Controllers
         // Handles the submitted Create form
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Owner owner)
+        public ActionResult Create(Owners owners)
         {
             if (!ModelState.IsValid)
             {
-                return View(owner);
+                return View(owners);
             }
 
             try
             {
-                int newId = _ownerRepo.Add(owner);
+                int newId = _ownerRepo.Add(owners);
                 TempData["Success"] =
                     "Owner successfully added. Owner ID: " + newId;
                 return RedirectToAction("Index");
@@ -49,39 +49,39 @@ namespace AtlasPremierProperties.Controllers
             {
                 
                 ModelState.AddModelError("", ex.Message);
-                return View(owner);
+                return View(owners);
             }
         }
 
         // Opens the edit form with the owner's current details filled in
         public ActionResult Edit(int id)
         {
-            var owner = _ownerRepo.GetById(id);
-            if (owner == null) return HttpNotFound();
+            var owners = _ownerRepo.GetById(id);
+            if (owners == null) return HttpNotFound();
 
-            return View(owner);
+            return View(owners);
         }
 
         // Saves the updated owner details
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Owner owner)
+        public ActionResult Edit(Owners owners)
         {
-            if (!ModelState.IsValid) return View(owner);
+            if (!ModelState.IsValid) return View(owners);
 
-            _ownerRepo.Update(owner);
+            _ownerRepo.Update(owners);
             TempData["Success"] =
-                "Owner ID " + owner.OwnerID + " successfully updated.";
+                "Owner ID " + owners.OwnerID + " successfully updated.";
             return RedirectToAction("Index");
         }
 
         //Confirmation page before deleting
         public ActionResult Delete(int id)
         {
-            var owner = _ownerRepo.GetById(id);
-            if (owner == null) return HttpNotFound();
+            var owners = _ownerRepo.GetById(id);
+            if (owners == null) return HttpNotFound();
 
-            return View(owner);
+            return View(owners);
         }
 
         // Handle sthe delete request after confirmation
