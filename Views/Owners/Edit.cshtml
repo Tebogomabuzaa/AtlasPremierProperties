@@ -1,0 +1,34 @@
+@model AtlasPremierProperties.Models.Entities.Owner
+
+@{
+    ViewBag.Title = "Edit Owner";
+}
+
+<h2>Edit Owner</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.OwnerID)
+
+    <p>
+        @Html.LabelFor(m => m.FirstName)
+        @Html.TextBoxFor(m => m.FirstName)
+    </p>
+    <p>
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName)
+    </p>
+    <p>
+        @Html.LabelFor(m => m.EmailAddress)
+        @Html.TextBoxFor(m => m.EmailAddress)
+    </p>
+    <p>
+        @Html.LabelFor(m => m.PhoneNumber)
+        @Html.TextBoxFor(m => m.PhoneNumber)
+    </p>
+
+    <button type="submit">Save Changes</button>
+    @Html.ActionLink("Cancel", "Index")
+}

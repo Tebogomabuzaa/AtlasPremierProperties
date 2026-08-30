@@ -1,0 +1,41 @@
+@model List<AtlasPremierProperties.Models.Entities.Owner>
+
+@{
+    ViewBag.Title = "Owners";
+}
+
+<h2>Owners</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div style="color:green;">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div style="color:red;">@TempData["Error"]</div>
+}
+
+<p>@Html.ActionLink("Add New Owner", "Create")</p>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Owner ID</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th></th>
+    </tr>
+    @foreach (var owner in Model)
+    {
+        <tr>
+            <td>@owner.OwnerID</td>
+            <td>@owner.FullName</td>
+            <td>@owner.EmailAddress</td>
+            <td>@owner.PhoneNumber</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = owner.OwnerID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = owner.OwnerID })
+            </td>
+        </tr>
+    }
+</table>
