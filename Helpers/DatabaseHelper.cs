@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-// Add comments
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data.OleDb;
 
 namespace AtlasPremierProperties.Helpers
