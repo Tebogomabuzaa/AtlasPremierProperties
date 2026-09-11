@@ -1,0 +1,45 @@
+﻿@model IEnumerable<AtlasPremierProperties.Models.Entities.PropertyManager>
+
+@{
+    ViewBag.Title = "Property Managers";
+}
+
+<h2>Property Managers</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<p>
+    @Html.ActionLink("Add New Property Manager", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Manager ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Date Hired</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var manager in Model)
+        {
+            <tr>
+                <td>@manager.ManagerID</td>
+                <td>@manager.FullName</td>
+                <td>@manager.Email</td>
+                <td>@manager.PhoneNumber</td>
+                <td>@manager.DateHired.ToShortDateString()</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = manager.ManagerID }, new { @class = "btn btn-sm btn-secondary" })
+                    @Html.ActionLink("Delete", "Delete", new { id = manager.ManagerID }, new { @class = "btn btn-sm btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

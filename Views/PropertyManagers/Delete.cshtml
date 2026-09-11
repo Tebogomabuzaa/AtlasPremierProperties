@@ -1,0 +1,37 @@
+﻿@model AtlasPremierProperties.Models.Entities.PropertyManager
+
+@{
+    ViewBag.Title = "Delete Property Manager";
+}
+
+<h2>Delete Property Manager</h2>
+
+<div class="alert alert-warning">
+    Are you sure you want to permanently remove this property manager?
+</div>
+
+<dl class="dl-horizontal">
+    <dt>Manager ID</dt>
+    <dd>@Model.ManagerID</dd>
+
+    <dt>Name</dt>
+    <dd>@Model.FullName</dd>
+
+    <dt>Email</dt>
+    <dd>@Model.Email</dd>
+
+    <dt>Phone</dt>
+    <dd>@Model.PhoneNumber</dd>
+
+    <dt>Date Hired</dt>
+    <dd>@Model.DateHired.ToShortDateString()</dd>
+</dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ManagerID)
+
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-link" })
+}
