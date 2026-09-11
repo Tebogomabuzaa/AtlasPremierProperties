@@ -1,0 +1,75 @@
+﻿@model IEnumerable<AtlasPremierProperties.Models.Entities.LeaseAgreement>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@{
+    ViewBag.Title = "Leases";
+}
+
+<h2>Leases</h2>
+
+<p>
+    @Html.ActionLink("Create New Lease", "Create")
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Property
+        </th>
+        <th>
+            Tenant
+        </th>
+        <th>
+            Manager
+        </th>
+        <th>
+            Start Date
+        </th>
+        <th>
+            End Date
+        </th>
+        <th>
+            Monthly Rent
+        </th>
+        <th>
+            Status
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.PropertyAddress
+            </td>
+            <td>
+                @item.TenantName
+            </td>
+            <td>
+                @item.ManagerName
+            </td>
+            <td>
+                @item.LeaseStartDate.ToShortDateString()
+            </td>
+            <td>
+                @item.LeaseEndDate.ToShortDateString()
+            </td>
+            <td>
+                @item.MonthlyRent.ToString("C")
+            </td>
+            <td>
+                @item.LeaseStatus
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.LeaseID }) |
+                @Html.ActionLink("Edit", "Edit", new { id = item.LeaseID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })
+            </td>
+        </tr>
+    }
+</table>
