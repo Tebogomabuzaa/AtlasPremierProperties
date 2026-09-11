@@ -187,12 +187,15 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\PropertyManagers\Index.cshtml" />
+    <Content Include="Views\PropertyManagers\Create.cshtml" />
+    <Content Include="Views\PropertyManagers\Edit.cshtml" />
+    <Content Include="Views\PropertyManagers\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ViewModels\" />
     <Folder Include="Services\" />
-    <Folder Include="Views\PropertyManagers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
