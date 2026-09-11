@@ -1,0 +1,80 @@
+﻿
+@model AtlasPremierProperties.Models.Entities.Settlement
+
+@{
+    ViewBag.Title = "Create Settlement";
+}
+
+<h2>Create Settlement</h2>
+
+@using (Html.BeginForm("Create", "Settlements", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <hr />
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LeaseID, "Lease", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList(
+                    "LeaseID",
+                    (SelectList)ViewBag.Leases,
+                    "-- Select Lease --",
+                    new { @class = "form-control" }
+                )
+                @Html.ValidationMessageFor(model => model.LeaseID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.GrossRent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(
+                    model => model.GrossRent,
+                    new { htmlAttributes = new { @class = "form-control", step = "0.01" } }
+                )
+                @Html.ValidationMessageFor(model => model.GrossRent, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MaintenanceCosts, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(
+                    model => model.MaintenanceCosts,
+                    new { htmlAttributes = new { @class = "form-control", step = "0.01" } }
+                )
+                @Html.ValidationMessageFor(model => model.MaintenanceCosts, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DaysOccupied, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(
+                    model => model.DaysOccupied,
+                    new { htmlAttributes = new { @class = "form-control" } }
+                )
+                @Html.ValidationMessageFor(model => model.DaysOccupied, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create Settlement" class="btn btn-primary" />
+                @Html.ActionLink(
+                    "Back to Settlements",
+                    "Index",
+                    null,
+                    new { @class = "btn btn-default" }
+                )
+            </div>
+        </div>
+
+    </div>
+}
+

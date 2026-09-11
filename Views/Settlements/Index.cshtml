@@ -1,0 +1,67 @@
+﻿@model IEnumerable<AtlasPremierProperties.Models.Entities.Settlement>
+
+@{
+    ViewBag.Title = "Settlements";
+}
+
+<h2>Settlements</h2>
+
+<p>
+    @Html.ActionLink("Create New Settlement", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["InvoiceLink"] != null)
+{
+    <div class="alert alert-info">
+        <strong>Crypto Invoice:</strong>
+        <a href="@TempData["InvoiceLink"]" target="_blank">
+            @TempData["InvoiceLink"]
+        </a>
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Settlement ID</th>
+            <th>Lease ID</th>
+            <th>Gross Rent</th>
+            <th>Maintenance Costs</th>
+            <th>Net Amount</th>
+            <th>Management Fee</th>
+            <th>Owner Payout</th>
+            <th>Days Occupied</th>
+            <th>Settlement Date</th>
+            <th>Crypto Invoice</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SettlementID</td>
+                <td>@item.LeaseID</td>
+                <td>R @item.GrossRent.ToString("N2")</td>
+                <td>R @item.MaintenanceCosts.ToString("N2")</td>
+                <td>R @item.NetAmount.ToString("N2")</td>
+                <td>R @item.ManagementFee.ToString("N2")</td>
+                <td>R @item.OwnerPayout.ToString("N2")</td>
+                <td>@item.DaysOccupied</td>
+                <td>@item.SettlementDate.ToString("dd MMM yyyy")</td>
+                <td>
+                    <a href="@item.CryptoInvoiceLink" target="_blank">
+                        View Invoice
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,47 @@
+﻿@model List<AtlasPremierProperties.Services.CoHostStats>
+
+<h2>Co-Host Performance Metrics</h2>
+
+@using (Html.BeginForm())
+{
+    <label>Start Date: <input type="date" name="startDate" required /></label>
+    <label>End Date: <input type="date" name="endDate" required /></label>
+    <button type="submit">Generate Report</button>
+}
+
+@if (ViewBag.ChartJson != null)
+{
+    <h3>@ViewBag.StartDate to @ViewBag.EndDate</h3>
+
+    <canvas id="coHostChart" style="max-height:400px;"></canvas>
+
+    <button onclick="window.print()">Export to PDF</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // d.labels, d.rates, d.colors come from the controller as JSON
+        var d = @Html.Raw(ViewBag.ChartJson);
+
+        new Chart(document.getElementById('coHostChart'), {
+            type: 'bar',
+            data: {
+                labels: d.labels,
+                datasets: [{
+                    label: 'Occupancy Rate (%)',
+                    data: d.rates,
+                    backgroundColor: d.colors
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+}
