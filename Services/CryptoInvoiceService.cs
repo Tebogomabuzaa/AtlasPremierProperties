@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace AtlasPremierProperties.Services
 {
@@ -10,12 +10,7 @@ namespace AtlasPremierProperties.Services
         {
             string uniqueId = Guid.NewGuid().ToString();
 
-            return string.Format(
-                "https://pay.cryptonics.app/invoice/{0}?lease={1}&amount={2:F2}",
-                uniqueId,
-                leaseId,
-                amount
-            );
+            return string.Format("https://pay.cryptonics.app/invoice/{0}?lease={1}&amount={2:F2}", uniqueId, leaseId, amount);
         }
     }
 }

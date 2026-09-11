@@ -12,7 +12,7 @@ namespace AtlasPremierProperties.Models.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
-        public string PassprtIDNumber { get; set; }
+        public string PassportIDNumber { get; set; }
         public string Nationality { get; set; }
         public decimal DeclaredMonthlyIncome { get; set; }
         public string VerificationStatus { get; set; }

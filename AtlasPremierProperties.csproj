@@ -133,6 +133,9 @@
     <Compile Include="Models\Entities\Settlement.cs" />
     <Compile Include="Models\Entities\Tenant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CryptoInvoiceService.cs" />
+    <Compile Include="Services\KycService.cs" />
+    <Compile Include="Services\SettlementService.cs" />
     <Compile Include="Repositories\IPropertyManagerRepository.cs" />
     <Compile Include="Repositories\PropertyManagerRepository.cs" />
   </ItemGroup>
@@ -191,6 +194,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ViewModels\" />
+    <Folder Include="Repositories\" />
     <Folder Include="Services\" />
     <Folder Include="Views\PropertyManagers\" />
   </ItemGroup>
