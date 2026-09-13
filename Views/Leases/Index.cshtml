@@ -1,75 +1,60 @@
-﻿@model IEnumerable<AtlasPremierProperties.Models.Entities.LeaseAgreement>
-@{
-    ViewBag.Title = "Index";
-}
-
-<h2>Index</h2>
-
+@model IEnumerable<AtlasPremierProperties.Models.Entities.LeaseAgreement>
 @{
     ViewBag.Title = "Leases";
 }
 
 <h2>Leases</h2>
 
-<p>
-    @Html.ActionLink("Create New Lease", "Create")
-</p>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
 
-<table class="table">
-    <tr>
-        <th>
-            Property
-        </th>
-        <th>
-            Tenant
-        </th>
-        <th>
-            Manager
-        </th>
-        <th>
-            Start Date
-        </th>
-        <th>
-            End Date
-        </th>
-        <th>
-            Monthly Rent
-        </th>
-        <th>
-            Status
-        </th>
-        <th></th>
-    </tr>
+<p>@Html.ActionLink("Add lease", "Create", null, new { @class = "btn btn-primary" })</p>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @item.PropertyAddress
-            </td>
-            <td>
-                @item.TenantName
-            </td>
-            <td>
-                @item.ManagerName
-            </td>
-            <td>
-                @item.LeaseStartDate.ToShortDateString()
-            </td>
-            <td>
-                @item.LeaseEndDate.ToShortDateString()
-            </td>
-            <td>
-                @item.MonthlyRent.ToString("C")
-            </td>
-            <td>
-                @item.LeaseStatus
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { id = item.LeaseID }) |
-                @Html.ActionLink("Edit", "Edit", new { id = item.LeaseID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })
-            </td>
-        </tr>
-    }
-</table>
+@if (!Model.Any())
+{
+    <p class="text-muted">No leases yet. Add a property, a tenant who has passed KYC and a property manager first.</p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Property</th>
+                <th>Tenant</th>
+                <th>Manager</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Monthly rent</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LeaseID</td>
+                    <td>@item.PropertyAddress</td>
+                    <td>@item.TenantName</td>
+                    <td>@item.ManagerName</td>
+                    <td>@item.LeaseStartDate.ToString("dd MMM yyyy")</td>
+                    <td>@item.LeaseEndDate.ToString("dd MMM yyyy")</td>
+                    <td>R @item.MonthlyRent.ToString("N2")</td>
+                    <td>@Html.Partial("_LeaseStatusBadge", item.LeaseStatus)</td>
+                    <td class="text-nowrap">
+                        @Html.ActionLink("Details", "Details", new { id = item.LeaseID }) |
+                        @Html.ActionLink("Edit", "Edit", new { id = item.LeaseID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

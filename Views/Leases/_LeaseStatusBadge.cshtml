@@ -1,0 +1,8 @@
+@model string
+@{
+    var badge = Model == "Active" ? "bg-success"
+        : Model == "Pending" ? "bg-warning text-dark"
+        : Model == "Terminated" ? "bg-danger"
+        : "bg-secondary";
+}
+<span class="badge @badge">@Model</span>

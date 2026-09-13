@@ -1,0 +1,57 @@
+@model AtlasPremierProperties.Models.Entities.LeaseAgreement
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<div class="mb-3">
+    @Html.LabelFor(m => m.PropertyID, new { @class = "form-label" })
+    @Html.DropDownListFor(m => m.PropertyID, (SelectList)ViewBag.Properties, "-- Select property --", new { @class = "form-select" })
+    @Html.ValidationMessageFor(m => m.PropertyID, "", new { @class = "text-danger" })
+</div>
+<div class="mb-3">
+    @Html.LabelFor(m => m.TenantID, new { @class = "form-label" })
+    @Html.DropDownListFor(m => m.TenantID, (SelectList)ViewBag.Tenants, "-- Select tenant --", new { @class = "form-select" })
+    <div class="form-text">Only tenants who passed KYC can be given a lease. Run KYC on the @Html.ActionLink("Tenants", "Index", "Tenants") page.</div>
+    @Html.ValidationMessageFor(m => m.TenantID, "", new { @class = "text-danger" })
+</div>
+<div class="mb-3">
+    @Html.LabelFor(m => m.ManagerID, new { @class = "form-label" })
+    @Html.DropDownListFor(m => m.ManagerID, (SelectList)ViewBag.Managers, "-- Select property manager --", new { @class = "form-select" })
+    @Html.ValidationMessageFor(m => m.ManagerID, "", new { @class = "text-danger" })
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        @Html.LabelFor(m => m.LeaseStartDate, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.LeaseStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+        @Html.ValidationMessageFor(m => m.LeaseStartDate, "", new { @class = "text-danger" })
+    </div>
+    <div class="col-md-6 mb-3">
+        @Html.LabelFor(m => m.LeaseEndDate, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.LeaseEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+        @Html.ValidationMessageFor(m => m.LeaseEndDate, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="mb-3">
+    @Html.LabelFor(m => m.MonthlyRent, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.MonthlyRent, "{0:0.00}", new { @class = "form-control", type = "number", step = "0.01", min = "0" })
+    <div class="form-text">Filled in from the property's rent when you pick a property. You can change it.</div>
+    @Html.ValidationMessageFor(m => m.MonthlyRent, "", new { @class = "text-danger" })
+</div>
+<div class="mb-3">
+    @Html.LabelFor(m => m.LeaseStatus, new { @class = "form-label" })
+    @Html.DropDownListFor(m => m.LeaseStatus, (SelectList)ViewBag.Statuses, new { @class = "form-select" })
+    <div class="form-text">Pending and Active leases hold the property. Ended and Terminated leases free it up.</div>
+    @Html.ValidationMessageFor(m => m.LeaseStatus, "", new { @class = "text-danger" })
+</div>
+
+<script>
+    (function () {
+        var rents = @Html.Raw(System.Web.Helpers.Json.Encode((object)ViewBag.PropertyRents));
+        var property = document.getElementById('PropertyID');
+        var rent = document.getElementById('MonthlyRent');
+        property.addEventListener('change', function () {
+            if (Object.prototype.hasOwnProperty.call(rents, property.value)) {
+                rent.value = Number(rents[property.value]).toFixed(2);
+            }
+        });
+    })();
+</script>
