@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using AtlasPremierProperties.Helpers;
@@ -16,18 +16,12 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                using (var cmd = new OleDbCommand("SELECT * FROM Tenant", conn))
+                using (var cmd = new OleDbCommand("SELECT * FROM Tenants", conn))
                 using (var r = cmd.ExecuteReader())
                 {
                     while (r.Read())
                     {
-                        list.Add(new Tenant
-                        {
-                            TenantID = Convert.ToInt32(r["TenantID"]),
-                            UserID = Convert.ToInt32(r["UserID"]),
-                            KYCStatus = r["KYCStatus"].ToString(),
-                            CreditScore = Convert.ToInt32(r["CreditScore"])
-                        });
+                        list.Add(Map(r));
                     }
                 }
             }
@@ -39,21 +33,12 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                using (var cmd = new OleDbCommand("SELECT * FROM Tenant WHERE TenantID = ?", conn))
+                using (var cmd = new OleDbCommand("SELECT * FROM Tenants WHERE TenantID = ?", conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     using (var r = cmd.ExecuteReader())
                     {
-                        if (r.Read())
-                        {
-                            return new Tenant
-                            {
-                                TenantID = Convert.ToInt32(r["TenantID"]),
-                                UserID = Convert.ToInt32(r["UserID"]),
-                                KYCStatus = r["KYCStatus"].ToString(),
-                                CreditScore = Convert.ToInt32(r["CreditScore"])
-                            };
-                        }
+                        if (r.Read()) return Map(r);
                     }
                 }
             }
@@ -65,14 +50,24 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                var sql = "INSERT INTO Tenant (UserID, KYCStatus, CreditScore) VALUES (?, ?, ?)";
+                var sql =
+                    "INSERT INTO Tenants " +
+                    "(FirstName, LastName, EmailAddress, PassportIDNumber, " +
+                    "Nationality, DeclaredMonthlyIncome, VerificationStatus) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@uid", t.UserID);
-                    cmd.Parameters.AddWithValue("@kyc", t.KYCStatus ?? "Pending");
-                    cmd.Parameters.AddWithValue("@cs", t.CreditScore);
+                    cmd.Parameters.AddWithValue("@firstName", t.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", t.LastName);
+                    cmd.Parameters.AddWithValue("@email", t.EmailAddress);
+                    cmd.Parameters.AddWithValue("@passport", t.PassportIDNumber);
+                    cmd.Parameters.AddWithValue("@nationality", t.Nationality);
+                    cmd.Parameters.AddWithValue("@income", t.DeclaredMonthlyIncome);
+                    cmd.Parameters.AddWithValue("@status", t.VerificationStatus ?? "Pending");
                     cmd.ExecuteNonQuery();
                 }
+
                 using (var idCmd = new OleDbCommand("SELECT @@IDENTITY", conn))
                     return Convert.ToInt32(idCmd.ExecuteScalar());
             }
@@ -83,12 +78,26 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                var sql = "UPDATE Tenant SET UserID = ?, KYCStatus = ?, CreditScore = ? WHERE TenantID = ?";
+                var sql =
+                    "UPDATE Tenants SET " +
+                    "FirstName = ?, " +
+                    "LastName = ?, " +
+                    "EmailAddress = ?, " +
+                    "PassportIDNumber = ?, " +
+                    "Nationality = ?, " +
+                    "DeclaredMonthlyIncome = ?, " +
+                    "VerificationStatus = ? " +
+                    "WHERE TenantID = ?";
+
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@uid", t.UserID);
-                    cmd.Parameters.AddWithValue("@kyc", t.KYCStatus);
-                    cmd.Parameters.AddWithValue("@cs", t.CreditScore);
+                    cmd.Parameters.AddWithValue("@firstName", t.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", t.LastName);
+                    cmd.Parameters.AddWithValue("@email", t.EmailAddress);
+                    cmd.Parameters.AddWithValue("@passport", t.PassportIDNumber);
+                    cmd.Parameters.AddWithValue("@nationality", t.Nationality);
+                    cmd.Parameters.AddWithValue("@income", t.DeclaredMonthlyIncome);
+                    cmd.Parameters.AddWithValue("@status", t.VerificationStatus);
                     cmd.Parameters.AddWithValue("@id", t.TenantID);
                     cmd.ExecuteNonQuery();
                 }
@@ -100,12 +109,29 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                using (var cmd = new OleDbCommand("DELETE FROM Tenant WHERE TenantID = ?", conn))
+                using (var cmd = new OleDbCommand("DELETE FROM Tenants WHERE TenantID = ?", conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        private Tenant Map(OleDbDataReader r)
+        {
+            return new Tenant
+            {
+                TenantID = Convert.ToInt32(r["TenantID"]),
+                FirstName = r["FirstName"].ToString(),
+                LastName = r["LastName"].ToString(),
+                EmailAddress = r["EmailAddress"].ToString(),
+                PassportIDNumber = r["PassportIDNumber"].ToString(),
+                Nationality = r["Nationality"].ToString(),
+                DeclaredMonthlyIncome = r["DeclaredMonthlyIncome"] == DBNull.Value
+                    ? 0m
+                    : Convert.ToDecimal(r["DeclaredMonthlyIncome"]),
+                VerificationStatus = r["VerificationStatus"].ToString()
+            };
         }
     }
 }
