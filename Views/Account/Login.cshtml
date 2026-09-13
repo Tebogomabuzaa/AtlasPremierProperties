@@ -1,40 +1,37 @@
 @model AtlasPremierProperties.Models.ViewModels.LoginViewModel
 @{
     ViewBag.Title = "Staff sign in";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <h2 class="mb-4">Staff sign in</h2>
+<h1>Staff sign in</h1>
 
-        @if (ViewBag.NeedsSetup == true)
-        {
-            <div class="alert alert-warning">
-                No users exist yet. Create the first administrator by opening
-                <code>/Account/Setup</code> in a browser on the server itself.
-            </div>
-        }
-
-        @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div class="mb-3">
-                @Html.LabelFor(m => m.Username, new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", autocomplete = "username", autofocus = "autofocus" })
-                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="mb-3">
-                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control", autocomplete = "current-password" })
-                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Sign in</button>
-        }
-
-        <p class="mt-3 text-center">@Html.ActionLink("Property owner? Sign in here", "OwnerLogin", "Account")</p>
+@if (ViewBag.NeedsSetup == true)
+{
+    <div class="alert alert-warning">
+        No users exist yet. Create the first administrator by opening
+        <code>/Account/Setup</code> in a browser on the server itself.
     </div>
-</div>
+}
+
+@using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.Username, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", autocomplete = "username", autofocus = "autofocus" })
+        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-4">
+        @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control", autocomplete = "current-password" })
+        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Sign in</button>
+}
+
+<p class="auth-links">@Html.ActionLink("Property owner? Sign in here", "OwnerLogin", "Account")</p>

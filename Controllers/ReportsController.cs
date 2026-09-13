@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using AtlasPremierProperties.Services;
 using Newtonsoft.Json;
@@ -7,6 +9,9 @@ namespace AtlasPremierProperties.Controllers
 {
     public class ReportsController : Controller
     {
+        // Managers at or above this occupancy rate are highlighted as top performers.
+        public const decimal TopPerformerRate = 90m;
+
         private readonly ReportService _reportService;
 
         public ReportsController()
@@ -14,41 +19,29 @@ namespace AtlasPremierProperties.Controllers
             _reportService = new ReportService();
         }
 
-        public ActionResult CoHostPerformance()
+        // Defaults to the last 12 months so the report shows something as soon as the page opens.
+        public ActionResult CoHostPerformance(DateTime? startDate, DateTime? endDate)
         {
-            return View();
-        }
+            var end = (endDate ?? DateTime.Today).Date;
+            var start = (startDate ?? end.AddYears(-1)).Date;
+            ViewBag.StartDate = start;
+            ViewBag.EndDate = end;
 
-        [HttpPost]
-        public ActionResult CoHostPerformance(DateTime startDate, DateTime endDate)
-        {
-            if (endDate < startDate)
+            if (end < start)
             {
                 ModelState.AddModelError("", "The end date must be on or after the start date.");
-                return View();
+                return View(new List<CoHostStats>());
             }
 
-            var data = _reportService.GetCoHostPerformance(startDate, endDate);
-
-            var labels = new System.Collections.Generic.List<string>();
-            var rates = new System.Collections.Generic.List<decimal>();
-            var colors = new System.Collections.Generic.List<string>();
+            var data = _reportService.GetCoHostPerformance(start, end);
 
             // Chart.js needs separate arrays, not a list of objects
-            foreach (var item in data)
+            ViewBag.ChartJson = JsonConvert.SerializeObject(new
             {
-                labels.Add(item.ManagerName);
-                rates.Add(item.OccupancyRate);
-
-                // Green if occupancy is healthy (70%+), red if it's low
-                colors.Add(item.OccupancyRate >= 70 ? "#28a745" : "#dc3545");
-            }
-
-            ViewBag.ChartJson = JsonConvert.SerializeObject(
-                new { labels, rates, colors });
-
-            ViewBag.StartDate = startDate.ToString("dd MMM yyyy");
-            ViewBag.EndDate = endDate.ToString("dd MMM yyyy");
+                labels = data.Select(d => d.ManagerName),
+                rates = data.Select(d => d.OccupancyRate),
+                colors = data.Select(d => d.OccupancyRate >= TopPerformerRate ? "#d4a340" : "#0f1d3d")
+            });
 
             return View(data);
         }

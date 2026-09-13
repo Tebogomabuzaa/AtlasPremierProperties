@@ -1,0 +1,114 @@
+@model AtlasPremierProperties.Models.ViewModels.SearchViewModel
+@{
+    ViewBag.Title = "Search";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Search</h1>
+        @if (Model.Query.Length == 0)
+        {
+            <p class="page-subtitle">Use the search box to find properties, tenants, leases and owners.</p>
+        }
+        else
+        {
+            <p class="page-subtitle">@Model.Total @(Model.Total == 1 ? "result" : "results") for "@Model.Query"</p>
+        }
+    </div>
+</div>
+
+@if (Model.Properties.Count > 0)
+{
+    <h3 class="h5 mb-3">Properties</h3>
+    <div class="table-card mb-4">
+        <div class="table-scroll">
+            <table class="table table-hover">
+                <thead><tr><th>Address</th><th>Description</th><th>Owner</th><th>Rent</th></tr></thead>
+                <tbody>
+                    @foreach (var p in Model.Properties)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink(p.PhysicalAddress, "Edit", "Properties", new { id = p.PropertyID }, null)</td>
+                            <td>@p.PropertyDescription</td>
+                            <td>@p.OwnerName</td>
+                            <td>R @p.MonthlyRent.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.Tenants.Count > 0)
+{
+    <h3 class="h5 mb-3">Tenants</h3>
+    <div class="table-card mb-4">
+        <div class="table-scroll">
+            <table class="table table-hover">
+                <thead><tr><th>Name</th><th>Email</th><th>Passport / ID</th><th>KYC status</th></tr></thead>
+                <tbody>
+                    @foreach (var t in Model.Tenants)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink(t.FullName, "Details", "Tenants", new { id = t.TenantID }, null)</td>
+                            <td>@t.EmailAddress</td>
+                            <td>@t.PassportIDNumber</td>
+                            <td>@t.VerificationStatus</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.Leases.Count > 0)
+{
+    <h3 class="h5 mb-3">Leases</h3>
+    <div class="table-card mb-4">
+        <div class="table-scroll">
+            <table class="table table-hover">
+                <thead><tr><th>Lease</th><th>Property</th><th>Tenant</th><th>Status</th></tr></thead>
+                <tbody>
+                    @foreach (var l in Model.Leases)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink("#" + l.LeaseID, "Details", "Leases", new { id = l.LeaseID }, null)</td>
+                            <td>@l.PropertyAddress</td>
+                            <td>@l.TenantName</td>
+                            <td>@Html.Partial("~/Views/Leases/_LeaseStatusBadge.cshtml", l.LeaseStatus)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.Owners.Count > 0)
+{
+    <h3 class="h5 mb-3">Owners</h3>
+    <div class="table-card mb-4">
+        <div class="table-scroll">
+            <table class="table table-hover">
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                <tbody>
+                    @foreach (var o in Model.Owners)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink(o.FullName, "Edit", "Owners", new { id = o.OwnerID }, null)</td>
+                            <td>@o.EmailAddress</td>
+                            <td>@o.PhoneNumber</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.Query.Length > 0 && Model.Total == 0)
+{
+    <div class="panel text-center">Nothing matches "@Model.Query". Try part of an address, a name or an email address.</div>
+}

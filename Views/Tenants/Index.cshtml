@@ -1,18 +1,16 @@
 @model IEnumerable<AtlasPremierProperties.Models.Entities.Tenant>
 @{
-    ViewBag.Title = "Tenants";
+    ViewBag.Title = "Tenants & KYC";
 }
 
-<h2>Tenants</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tenant Management</h1>
+        <p class="page-subtitle">KYC vetting and tenant compliance.</p>
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+@Html.Partial("_Alerts")
 @if (TempData["KycResult"] != null)
 {
     var approved = (string)TempData["KycResult"] == "Approved";
@@ -21,44 +19,52 @@
     </div>
 }
 
-<p>@Html.ActionLink("Add tenant", "Create", null, new { @class = "btn btn-primary" })</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "plus") Add Tenant</a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Nationality</th>
-            <th>Income</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            var badge = item.VerificationStatus == "Approved" ? "bg-success"
-                : item.VerificationStatus == "Declined" ? "bg-danger"
-                : "bg-secondary";
-            <tr>
-                <td>@item.TenantID</td>
-                <td>@item.FullName</td>
-                <td>@item.EmailAddress</td>
-                <td>@item.Nationality</td>
-                <td>R @item.DeclaredMonthlyIncome.ToString("N2")</td>
-                <td><span class="badge @badge">@item.VerificationStatus</span></td>
-                <td class="text-nowrap">
-                    @Html.ActionLink("Details", "Details", new { id = item.TenantID }) |
-                    @Html.ActionLink("Edit", "Edit", new { id = item.TenantID }) |
-                    @using (Html.BeginForm("RunKyc", "Tenants", new { id = item.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-outline-primary">Run KYC</button>
-                    }
-                    | @Html.ActionLink("Delete", "Delete", new { id = item.TenantID })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Tenant ID</th>
+                    <th>Name</th>
+                    <th>Passport / ID</th>
+                    <th>Nationality</th>
+                    <th>KYC status</th>
+                    <th>Income</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="empty">No tenant records yet.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    var badge = item.VerificationStatus == "Approved" ? "bg-success"
+                        : item.VerificationStatus == "Declined" ? "bg-danger"
+                        : "bg-secondary";
+                    <tr>
+                        <td>@item.TenantID</td>
+                        <td>@Html.ActionLink(item.FullName, "Details", new { id = item.TenantID })</td>
+                        <td>@item.PassportIDNumber</td>
+                        <td>@item.Nationality</td>
+                        <td><span class="badge @badge">@item.VerificationStatus</span></td>
+                        <td>R @item.DeclaredMonthlyIncome.ToString("N2")</td>
+                        <td class="actions">
+                            @using (Html.BeginForm("RunKyc", "Tenants", new { id = item.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-primary me-2">Run KYC</button>
+                            }
+                            @Html.ActionLink("Edit", "Edit", new { id = item.TenantID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = item.TenantID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

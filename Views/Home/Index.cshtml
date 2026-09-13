@@ -1,34 +1,75 @@
+@model AtlasPremierProperties.Models.ViewModels.DashboardViewModel
 @{
     ViewBag.Title = "Dashboard";
-
-    var modules = new[]
-    {
-        new { Title = "Properties", Text = "Property listings, vacancy status and owner links.", Controller = "Properties", Action = "Index" },
-        new { Title = "Owners", Text = "Property owners and their owner portal access.", Controller = "Owners", Action = "Index" },
-        new { Title = "Tenants and KYC", Text = "Tenant records and simulated KYC verification.", Controller = "Tenants", Action = "Index" },
-        new { Title = "Leases", Text = "Lease agreements linking properties, tenants and managers.", Controller = "Leases", Action = "Index" },
-        new { Title = "Property managers", Text = "The co-hosts who manage leases.", Controller = "PropertyManagers", Action = "Index" },
-        new { Title = "Settlements", Text = "Pro-rata settlements with a unique crypto invoice link.", Controller = "Settlements", Action = "Index" },
-        new { Title = "Co-host report", Text = "Occupancy rate by property manager, charted.", Controller = "Reports", Action = "CoHostPerformance" }
-    };
 }
 
-<div class="text-center my-4">
-    <h1 class="display-5">Cryptonics Property Management</h1>
-    <p class="lead">Property management with crypto settlement payments for Atlas Premier Properties.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Executive Dashboard</h1>
+        <p class="page-subtitle">Welcome back. Here's what's happening across your portfolio.</p>
+    </div>
+    <a href="@Url.Action("Create", "Tenants")" class="btn btn-primary">@Html.Partial("_Icon", "tenants") Vet New Tenant</a>
 </div>
 
-<div class="row g-4">
-    @foreach (var module in modules)
-    {
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@module.Title</h5>
-                    <p class="card-text">@module.Text</p>
-                    @Html.ActionLink("Open", module.Action, module.Controller, null, new { @class = "btn btn-primary" })
-                </div>
-            </div>
-        </div>
-    }
+<div class="kpi-grid">
+    <a class="kpi" href="@Url.Action("Index", "Leases")">
+        <span class="kpi-icon navy">@Html.Partial("_Icon", "leases")</span>
+        <span class="kpi-arrow">@Html.Partial("_Icon", "arrow")</span>
+        <div class="kpi-value">@Model.ActiveLeases</div>
+        <div class="kpi-label">Total Active Leases</div>
+        <div class="kpi-note">Live contracts</div>
+    </a>
+    <a class="kpi" href="@Url.Action("Index", "Settlements")">
+        <span class="kpi-icon gold">@Html.Partial("_Icon", "bitcoin")</span>
+        <span class="kpi-arrow">@Html.Partial("_Icon", "arrow")</span>
+        <div class="kpi-value">@Model.SettlementsThisMonth</div>
+        <div class="kpi-label">Crypto Settlements This Month</div>
+        <div class="kpi-note">R @Model.PayoutsThisMonth.ToString("N2") to owners</div>
+    </a>
+    <a class="kpi" href="@Url.Action("Index", "Properties")">
+        <span class="kpi-icon slate">@Html.Partial("_Icon", "properties")</span>
+        <span class="kpi-arrow">@Html.Partial("_Icon", "arrow")</span>
+        <div class="kpi-value">@Model.PropertyCount</div>
+        <div class="kpi-label">Properties Under Mgmt</div>
+        <div class="kpi-note">@Model.TenantsPendingKyc @(Model.TenantsPendingKyc == 1 ? "tenant" : "tenants") pending KYC</div>
+    </a>
+    <a class="kpi" href="@Url.Action("CoHostPerformance", "Reports")">
+        <span class="kpi-icon green">@Html.Partial("_Icon", "trending")</span>
+        <span class="kpi-arrow">@Html.Partial("_Icon", "arrow")</span>
+        <div class="kpi-value">@Model.OccupancyRate.ToString("0.#")%</div>
+        <div class="kpi-label">Occupancy Rate</div>
+        <div class="kpi-note">@Model.OccupiedProperties of @Model.PropertyCount occupied today</div>
+    </a>
+</div>
+
+<div class="split-grid">
+    <section class="panel">
+        <h2 class="panel-title">Recent Activity</h2>
+        @if (Model.RecentActivity.Count == 0)
+        {
+            <p class="mb-0">No recent activity yet. Start by adding properties and tenants.</p>
+        }
+        else
+        {
+            <ul class="activity-list">
+                @foreach (var item in Model.RecentActivity)
+                {
+                    <li>
+                        <span class="activity-icon">@Html.Partial("_Icon", item.Icon)</span>
+                        <div>
+                            <a href="@item.Url">@item.Text</a>
+                            <div class="activity-meta">@item.Meta</div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section class="panel panel-dark">
+        <h2 class="panel-title">Quick Actions</h2>
+        <a class="quick-action" href="@Url.Action("Create", "Tenants")">@Html.Partial("_Icon", "tenants") Vet New Tenant</a>
+        <a class="quick-action" href="@Url.Action("Create", "Settlements")">@Html.Partial("_Icon", "bitcoin") Generate Crypto Invoice</a>
+        <a class="quick-action mb-0" href="@Url.Action("CoHostPerformance", "Reports")">@Html.Partial("_Icon", "trending") Co-Host Performance</a>
+    </section>
 </div>

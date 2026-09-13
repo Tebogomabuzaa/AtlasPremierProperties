@@ -3,55 +3,60 @@
     ViewBag.Title = "Properties";
 }
 
-<h2>Properties</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Properties</h1>
+        <p class="page-subtitle">Portfolio of managed properties.</p>
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+@Html.Partial("_Alerts")
 
-<p>@Html.ActionLink("Add property", "Create", null, new { @class = "btn btn-primary" })</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "plus") Add Property</a>
+</div>
 
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Description</th>
-            <th>Address</th>
-            <th>Owner</th>
-            <th>Monthly rent</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.PropertyID</td>
-                <td>@item.PropertyDescription</td>
-                <td>@item.PhysicalAddress</td>
-                <td>@item.OwnerName</td>
-                <td>R @item.MonthlyRent.ToString("N2")</td>
-                <td>
-                    @if (item.VacancyStatus)
-                    {
-                        <span class="badge bg-warning text-dark">Vacant</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success">Occupied</span>
-                    }
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.PropertyID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.PropertyID })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Address</th>
+                    <th>Owner</th>
+                    <th>Rent</th>
+                    <th>Status</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="empty">No property records yet.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.PropertyDescription</td>
+                        <td>@item.PhysicalAddress</td>
+                        <td>@item.OwnerName</td>
+                        <td>R @item.MonthlyRent.ToString("N2")</td>
+                        <td>
+                            @if (item.VacancyStatus)
+                            {
+                                <span class="badge bg-warning text-dark">Vacant</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Occupied</span>
+                            }
+                        </td>
+                        <td class="actions">
+                            @Html.ActionLink("Edit", "Edit", new { id = item.PropertyID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = item.PropertyID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

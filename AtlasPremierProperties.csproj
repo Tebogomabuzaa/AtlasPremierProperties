@@ -140,6 +140,8 @@
     <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Models\ViewModels\OwnerLoginViewModel.cs" />
     <Compile Include="Models\ViewModels\OwnerPortalViewModel.cs" />
+    <Compile Include="Models\ViewModels\DashboardViewModel.cs" />
+    <Compile Include="Models\ViewModels\SearchViewModel.cs" />
     <Compile Include="Repositories\PropertyRepository.cs" />
     <Compile Include="Models\Entities\LeaseAgreement.cs" />
     <Compile Include="Models\Entities\Owners.cs" />
@@ -225,8 +227,10 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Shared\_AuthLayout.cshtml" />
+    <Content Include="Views\Shared\_Icon.cshtml" />
+    <Content Include="Views\Shared\_Alerts.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Settlements\Index.cshtml" />
     <Content Include="Views\Settlements\Create.cshtml" />

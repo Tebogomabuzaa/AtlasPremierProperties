@@ -1,14 +1,16 @@
 @model IEnumerable<AtlasPremierProperties.Models.Entities.Settlement>
 @{
-    ViewBag.Title = "Settlements";
+    ViewBag.Title = "Crypto Settlements";
 }
 
-<h2>Settlements</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Crypto Settlements</h1>
+        <p class="page-subtitle">Owner payouts and their crypto payment links.</p>
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+@Html.Partial("_Alerts")
 @if (TempData["InvoiceLink"] != null)
 {
     <div class="alert alert-info">
@@ -17,43 +19,53 @@
     </div>
 }
 
-<p>@Html.ActionLink("Create settlement", "Create", null, new { @class = "btn btn-success" })</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "bitcoin") Generate Crypto Invoice</a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Lease</th>
-            <th>Gross rent</th>
-            <th>Maintenance</th>
-            <th>Net</th>
-            <th>Mgmt fee (12%)</th>
-            <th>Owner payout</th>
-            <th>Days</th>
-            <th>Date</th>
-            <th>Crypto invoice</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.SettlementID</td>
-                <td>#@item.LeaseID</td>
-                <td>R @item.GrossRent.ToString("N2")</td>
-                <td>R @item.MaintenanceCosts.ToString("N2")</td>
-                <td>R @item.NetAmount.ToString("N2")</td>
-                <td>R @item.ManagementFee.ToString("N2")</td>
-                <td><strong>R @item.OwnerPayout.ToString("N2")</strong></td>
-                <td>@item.DaysOccupied</td>
-                <td>@item.SettlementDate.ToString("dd MMM yyyy")</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.CryptoInvoiceLink))
-                    {
-                        <a href="@item.CryptoInvoiceLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success">Pay</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Lease</th>
+                    <th>Date</th>
+                    <th>Days</th>
+                    <th>Gross rent</th>
+                    <th>Maintenance</th>
+                    <th>Net</th>
+                    <th>Mgmt fee (12%)</th>
+                    <th>Owner payout</th>
+                    <th class="actions">Invoice</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="10" class="empty">No settlements yet.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.SettlementID</td>
+                        <td>@Html.ActionLink("#" + item.LeaseID, "Details", "Leases", new { id = item.LeaseID }, null)</td>
+                        <td class="text-nowrap">@item.SettlementDate.ToString("dd MMM yyyy")</td>
+                        <td>@item.DaysOccupied</td>
+                        <td>R @item.GrossRent.ToString("N2")</td>
+                        <td>R @item.MaintenanceCosts.ToString("N2")</td>
+                        <td>R @item.NetAmount.ToString("N2")</td>
+                        <td>R @item.ManagementFee.ToString("N2")</td>
+                        <td><strong>R @item.OwnerPayout.ToString("N2")</strong></td>
+                        <td class="actions">
+                            @if (!string.IsNullOrEmpty(item.CryptoInvoiceLink))
+                            {
+                                <a href="@item.CryptoInvoiceLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">Pay</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
