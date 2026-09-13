@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using AtlasPremierProperties.Services;
 using Newtonsoft.Json;
@@ -22,6 +22,12 @@ namespace AtlasPremierProperties.Controllers
         [HttpPost]
         public ActionResult CoHostPerformance(DateTime startDate, DateTime endDate)
         {
+            if (endDate < startDate)
+            {
+                ModelState.AddModelError("", "The end date must be on or after the start date.");
+                return View();
+            }
+
             var data = _reportService.GetCoHostPerformance(startDate, endDate);
 
             var labels = new System.Collections.Generic.List<string>();

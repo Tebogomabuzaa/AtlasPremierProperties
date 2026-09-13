@@ -122,17 +122,25 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LeaseController.cs" />
+    <Compile Include="Controllers\OwnerPortalController.cs" />
     <Compile Include="Controllers\OwnersController.cs" />
+    <Compile Include="Controllers\PropertiesController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\SettlementsController.cs" />
     <Compile Include="Controllers\PropertyManagersController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
+    <Compile Include="Filters\OwnerAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AuthCookie.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />
     <Compile Include="Helpers\PasswordHasher.cs" />
+    <Compile Include="Models\ViewModels\OwnerLoginViewModel.cs" />
+    <Compile Include="Models\ViewModels\OwnerPortalViewModel.cs" />
+    <Compile Include="Repositories\PropertyRepository.cs" />
     <Compile Include="Models\Entities\LeaseAgreement.cs" />
     <Compile Include="Models\Entities\Owners.cs" />
     <Compile Include="Models\Entities\Property.cs" />
@@ -157,7 +165,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\OwnerLogin.cshtml" />
     <Content Include="Views\Account\Setup.cshtml" />
+    <Content Include="Views\Landing\Index.cshtml" />
+    <Content Include="Views\OwnerPortal\Index.cshtml" />
+    <Content Include="Views\Properties\Index.cshtml" />
+    <Content Include="Views\Properties\Create.cshtml" />
+    <Content Include="Views\Properties\Edit.cshtml" />
+    <Content Include="Views\Properties\Delete.cshtml" />
+    <Content Include="Views\Tenants\Index.cshtml" />
+    <Content Include="Views\Tenants\Create.cshtml" />
+    <Content Include="Views\Tenants\Edit.cshtml" />
+    <Content Include="Views\Tenants\Delete.cshtml" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />

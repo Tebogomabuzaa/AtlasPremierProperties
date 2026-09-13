@@ -1,0 +1,13 @@
+@{
+    ViewBag.Title = "Welcome";
+}
+
+<div class="text-center py-5">
+    <h1 class="mb-3">Cryptonics Property Management</h1>
+    <p class="text-muted mb-5">Atlas Premier Properties. Choose how you'd like to sign in.</p>
+
+    <div class="d-flex justify-content-center gap-3">
+        @Html.ActionLink("Property owner", "OwnerLogin", "Account", null, new { @class = "btn btn-primary btn-lg px-4" })
+        @Html.ActionLink("Staff", "Login", "Account", null, new { @class = "btn btn-outline-secondary btn-lg px-4" })
+    </div>
+</div>

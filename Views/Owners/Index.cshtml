@@ -1,5 +1,4 @@
 @model List<AtlasPremierProperties.Models.Entities.Owners>
-
 @{
     ViewBag.Title = "Owners";
 }
@@ -8,34 +7,40 @@
 
 @if (TempData["Success"] != null)
 {
-    <div style="color:green;">@TempData["Success"]</div>
+    <div class="alert alert-success">@TempData["Success"]</div>
 }
 @if (TempData["Error"] != null)
 {
-    <div style="color:red;">@TempData["Error"]</div>
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-<p>@Html.ActionLink("Add New Owner", "Create")</p>
+<p>@Html.ActionLink("Add owner", "Create", null, new { @class = "btn btn-primary" })</p>
 
-<table border="1" cellpadding="6">
-    <tr>
-        <th>Owner ID</th>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th></th>
-    </tr>
-    @foreach (var owner in Model)
-    {
+<table class="table table-striped">
+    <thead>
         <tr>
-            <td>@owner.OwnerID</td>
-            <td>@owner.FullName</td>
-            <td>@owner.EmailAddress</td>
-            <td>@owner.PhoneNumber</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = owner.OwnerID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = owner.OwnerID })
-            </td>
+            <th>Owner ID</th>
+            <th>Full name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Portal access</th>
+            <th></th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var owner in Model)
+        {
+            <tr>
+                <td>@owner.OwnerID</td>
+                <td>@owner.FullName</td>
+                <td>@owner.EmailAddress</td>
+                <td>@owner.PhoneNumber</td>
+                <td>@(owner.HasPortalAccess ? "Yes" : "No")</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = owner.OwnerID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = owner.OwnerID })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
