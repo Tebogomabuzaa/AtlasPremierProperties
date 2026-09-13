@@ -1,46 +1,62 @@
 @model List<AtlasPremierProperties.Models.Entities.Owners>
 @{
-    ViewBag.Title = "Owners";
+    ViewBag.Title = "Property Owners";
 }
 
-<h2>Owners</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Property Owners</h1>
+        <p class="page-subtitle">Owners of the managed properties and their portal access.</p>
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+@Html.Partial("_Alerts")
 
-<p>@Html.ActionLink("Add owner", "Create", null, new { @class = "btn btn-primary" })</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "plus") Add Owner</a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Owner ID</th>
-            <th>Full name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Portal access</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var owner in Model)
-        {
-            <tr>
-                <td>@owner.OwnerID</td>
-                <td>@owner.FullName</td>
-                <td>@owner.EmailAddress</td>
-                <td>@owner.PhoneNumber</td>
-                <td>@(owner.HasPortalAccess ? "Yes" : "No")</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = owner.OwnerID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = owner.OwnerID })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Owner ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Portal access</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr><td colspan="6" class="empty">No owner records yet.</td></tr>
+                }
+                @foreach (var owner in Model)
+                {
+                    <tr>
+                        <td>@owner.OwnerID</td>
+                        <td>@owner.FullName</td>
+                        <td>@owner.EmailAddress</td>
+                        <td>@owner.PhoneNumber</td>
+                        <td>
+                            @if (owner.HasPortalAccess)
+                            {
+                                <span class="badge bg-success">Enabled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Not set up</span>
+                            }
+                        </td>
+                        <td class="actions">
+                            @Html.ActionLink("Edit", "Edit", new { id = owner.OwnerID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = owner.OwnerID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

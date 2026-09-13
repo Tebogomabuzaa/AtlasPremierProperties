@@ -1,45 +1,53 @@
-﻿@model IEnumerable<AtlasPremierProperties.Models.Entities.PropertyManager>
-
+@model IEnumerable<AtlasPremierProperties.Models.Entities.PropertyManager>
 @{
     ViewBag.Title = "Property Managers";
 }
 
-<h2>Property Managers</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Property Managers</h1>
+        <p class="page-subtitle">The co-hosts who look after lease agreements.</p>
+    </div>
+</div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
+@Html.Partial("_Alerts")
 
-<p>
-    @Html.ActionLink("Add New Property Manager", "Create", null, new { @class = "btn btn-primary" })
-</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "plus") Add Property Manager</a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Manager ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Date Hired</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var manager in Model)
-        {
-            <tr>
-                <td>@manager.ManagerID</td>
-                <td>@manager.FullName</td>
-                <td>@manager.Email</td>
-                <td>@manager.PhoneNumber</td>
-                <td>@manager.DateHired.ToShortDateString()</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = manager.ManagerID }, new { @class = "btn btn-sm btn-secondary" })
-                    @Html.ActionLink("Delete", "Delete", new { id = manager.ManagerID }, new { @class = "btn btn-sm btn-danger" })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Manager ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Date hired</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="empty">No property manager records yet.</td></tr>
+                }
+                @foreach (var manager in Model)
+                {
+                    <tr>
+                        <td>@manager.ManagerID</td>
+                        <td>@manager.FullName</td>
+                        <td>@manager.Email</td>
+                        <td>@manager.PhoneNumber</td>
+                        <td>@manager.DateHired.ToString("dd MMM yyyy")</td>
+                        <td class="actions">
+                            @Html.ActionLink("Edit", "Edit", new { id = manager.ManagerID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = manager.ManagerID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

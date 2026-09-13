@@ -1,57 +1,100 @@
 @using AtlasPremierProperties.Helpers
+@{
+    var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+    var isStaff = User.IsInRole(AuthCookie.StaffRole);
+    var isOwner = User.IsInRole(AuthCookie.OwnerRole);
+    var userName = Request.IsAuthenticated ? User.Identity.Name : "";
+    var initials = userName.Length > 2 ? userName.Substring(0, 2).ToUpperInvariant() : userName.ToUpperInvariant();
+
+    var staffNav = new[]
+    {
+        new { Controller = "Home", Action = "Index", Label = "Dashboard", Icon = "dashboard" },
+        new { Controller = "Properties", Action = "Index", Label = "Properties", Icon = "properties" },
+        new { Controller = "Owners", Action = "Index", Label = "Property Owners", Icon = "owners" },
+        new { Controller = "Tenants", Action = "Index", Label = "Tenants & KYC", Icon = "tenants" },
+        new { Controller = "PropertyManagers", Action = "Index", Label = "Property Managers", Icon = "managers" },
+        new { Controller = "Leases", Action = "Index", Label = "Lease Agreements", Icon = "leases" },
+        new { Controller = "Settlements", Action = "Index", Label = "Crypto Settlements", Icon = "bitcoin" },
+        new { Controller = "Reports", Action = "CoHostPerformance", Label = "Management Reports", Icon = "reports" }
+    };
+    var ownerNav = new[] { new { Controller = "OwnerPortal", Action = "Index", Label = "My Properties", Icon = "home" } };
+    var nav = isStaff ? staffNav : isOwner ? ownerNav : ownerNav.Take(0).ToArray();
+}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Cryptonics Property Management</title>
+    <title>@ViewBag.Title — Cryptonics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Cryptonics PMS", "Index", "Landing", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    @if (User.IsInRole(AuthCookie.StaffRole))
+    <div id="app">
+        <aside class="sidebar">
+            <a class="brand" href="@Url.Action("Index", isOwner ? "OwnerPortal" : "Home")">
+                <span class="brand-mark">@Html.Partial("_Icon", "shield")</span>
+                <span>
+                    <span class="brand-name">CRYPTONICS</span>
+                    <span class="brand-tagline">Property Suite</span>
+                </span>
+            </a>
+            <nav aria-label="Main">
+                <ul class="sidebar-nav">
+                    @foreach (var item in nav)
                     {
-                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Properties", "Index", "Properties", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Owners", "Index", "Owners", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Tenants", "Index", "Tenants", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Leases", "Index", "Leases", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Managers", "Index", "PropertyManagers", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Settlements", "Index", "Settlements", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Reports", "CoHostPerformance", "Reports", new { area = "" }, new { @class = "nav-link" })</li>
-                    }
-                    else if (User.IsInRole(AuthCookie.OwnerRole))
-                    {
-                        <li>@Html.ActionLink("My Properties", "Index", "OwnerPortal", new { area = "" }, new { @class = "nav-link" })</li>
+                        var active = string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase);
+                        <li>
+                            <a href="@Url.Action(item.Action, item.Controller, new { area = "" })" class="@(active ? "active" : null)" aria-current="@(active ? "page" : null)">
+                                @Html.Partial("_Icon", item.Icon)
+                                <span>@item.Label</span>
+                            </a>
+                        </li>
                     }
                 </ul>
+            </nav>
+            <div class="sidebar-footer">v1.0 · Secure B2B Portal</div>
+        </aside>
+        <div class="sidebar-backdrop" onclick="document.getElementById('app').classList.remove('nav-open')"></div>
+
+        <div class="main">
+            <header class="topbar">
+                <button type="button" class="icon-button sidebar-toggle" aria-label="Open menu" onclick="document.getElementById('app').classList.add('nav-open')">
+                    @Html.Partial("_Icon", "menu")
+                </button>
+
+                @if (isStaff)
+                {
+                    <form class="topbar-search" action="@Url.Action("Search", "Home", new { area = "" })" method="get" role="search">
+                        @Html.Partial("_Icon", "search")
+                        <input type="search" name="q" value="@Request.QueryString["q"]" placeholder="Search properties, tenants, leases..." aria-label="Search properties, tenants, leases and owners" />
+                    </form>
+                }
+
                 @if (Request.IsAuthenticated)
                 {
-                    using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { @class = "d-flex align-items-center" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <span class="navbar-text me-3">@User.Identity.Name</span>
-                        <button type="submit" class="btn btn-outline-light btn-sm">Sign out</button>
-                    }
+                    <div class="user-chip">
+                        <span class="avatar" aria-hidden="true">@initials</span>
+                        <span class="user-text">
+                            <span class="user-name d-block">@userName</span>
+                            <span class="user-role d-block">@(isOwner ? "Property owner" : "Cryptonics HQ")</span>
+                        </span>
+                        @using (Html.BeginForm("Logout", "Account", new { area = "" }, FormMethod.Post, new { @class = "m-0" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="icon-button" title="Sign out" aria-label="Sign out">@Html.Partial("_Icon", "logout")</button>
+                        }
+                    </div>
                 }
-            </div>
+            </header>
+
+            <main class="page-body">
+                @RenderBody()
+            </main>
         </div>
-    </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Cryptonics Property Management System</p>
-        </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")

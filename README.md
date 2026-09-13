@@ -9,6 +9,8 @@ Live site: https://d521aqku9szcv.cloudfront.net (when the server is running)
 | Area | What it does |
 | --- | --- |
 | Staff sign-in | Username and password accounts for staff. The first administrator is created on the Setup page. |
+| Dashboard | Active leases, this month's crypto settlements, properties under management, today's occupancy rate, recent activity and quick actions. |
+| Search | The search box at the top of every staff page finds properties, tenants, leases and owners. |
 | Owners | Add, edit and delete owners. Give an owner a portal password so they can sign in. |
 | Owner portal | Owners see their properties, which are vacant or occupied, and their total monthly rent. |
 | Properties | Add, edit and delete properties, each linked to an owner. Addresses must be unique. |
@@ -32,8 +34,8 @@ Live site: https://d521aqku9szcv.cloudfront.net (when the server is running)
   2. Net amount = gross rent − maintenance costs.
   3. Management fee = 12% of the net amount.
   4. Owner payout = net amount − management fee.
-  5. A payment link is generated for the payout. This is simulated (`Services/CryptoInvoiceService.cs`) and doesn't take real payments.
-- **Co-host report**: for each manager, the days their leases overlap the chosen period, divided by the days in the period.
+  5. A payment link is generated for the payout in the chosen currency: Bitcoin, Ethereum, Tether or USD Coin. This is simulated (`Services/CryptoInvoiceService.cs`) and doesn't take real payments.
+- **Co-host report**: for each manager, the days their leases overlap the chosen period, divided by the days in the period. It defaults to the last 12 months, and managers at 90% or above are marked as top performers.
 
 ## Tech stack
 
@@ -198,4 +200,4 @@ This permanently deletes the server, **including its database**, plus the S3 buc
 - **Access database:** it suits a single server and light use. It doesn't handle many simultaneous users well, and there are no automatic backups. Moving to SQL Server or Amazon RDS would be the next step for real use.
 - **Simulated services:** KYC and the crypto invoice link are simulated, not connected to real providers.
 - **Leases and vacancy:** creating a lease doesn't change the property's Vacant flag automatically.
-- **Leftover pages:** the About and Contact pages are still the Visual Studio template pages.
+- **Settlement status:** settlements don't record whether the crypto invoice has been paid.

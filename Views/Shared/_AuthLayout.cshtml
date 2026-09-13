@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title — Cryptonics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+</head>
+<body class="auth-body">
+    <div class="auth-wrap">
+        <a class="brand" href="@Url.Action("Index", "Landing", new { area = "" })">
+            <span class="brand-mark">@Html.Partial("_Icon", "shield")</span>
+            <span>
+                <span class="brand-name">CRYPTONICS</span>
+                <span class="brand-tagline">Property Suite</span>
+            </span>
+        </a>
+
+        <div class="auth-card">
+            @RenderBody()
+        </div>
+
+        <p class="auth-footer">Secure B2B Portal · Atlas Premier Properties</p>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

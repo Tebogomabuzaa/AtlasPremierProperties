@@ -1,0 +1,15 @@
+@* Shows the one-off success and error messages controllers put in TempData. *@
+@foreach (var key in new[] { "Success", "SuccessMessage" })
+{
+    if (TempData[key] != null)
+    {
+        <div class="alert alert-success">@TempData[key]</div>
+    }
+}
+@foreach (var key in new[] { "Error", "ErrorMessage" })
+{
+    if (TempData[key] != null)
+    {
+        <div class="alert alert-danger">@TempData[key]</div>
+    }
+}

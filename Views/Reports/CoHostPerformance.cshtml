@@ -1,64 +1,101 @@
 @model List<AtlasPremierProperties.Services.CoHostStats>
 @{
-    ViewBag.Title = "Co-Host Performance";
+    ViewBag.Title = "Management Reports";
+    var start = (DateTime)ViewBag.StartDate;
+    var end = (DateTime)ViewBag.EndDate;
+    var average = Model.Count == 0 ? 0m : Math.Round(Model.Average(m => m.OccupancyRate), 1);
 }
 
-<h2>Co-Host Performance Metrics</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Co-Host Performance Report</h1>
+        <p class="page-subtitle">Comparative occupancy across property managers in the selected period.</p>
+    </div>
+</div>
 
-@using (Html.BeginForm("CoHostPerformance", "Reports", FormMethod.Post, new { @class = "row g-3 mb-4" }))
-{
-    @Html.ValidationSummary(true, "", new { @class = "text-danger col-12" })
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-    <div class="col-auto">
+<form method="get" action="@Url.Action("CoHostPerformance")" class="panel filter-card no-print">
+    <div>
         <label class="form-label" for="startDate">Start date</label>
-        <input type="date" id="startDate" name="startDate" class="form-control" required />
+        <input type="date" id="startDate" name="startDate" class="form-control" value="@start.ToString("yyyy-MM-dd")" required />
     </div>
-    <div class="col-auto">
+    <div>
         <label class="form-label" for="endDate">End date</label>
-        <input type="date" id="endDate" name="endDate" class="form-control" required />
+        <input type="date" id="endDate" name="endDate" class="form-control" value="@end.ToString("yyyy-MM-dd")" required />
     </div>
-    <div class="col-auto align-self-end">
-        <button type="submit" class="btn btn-primary">Generate report</button>
+    <button type="submit" class="btn btn-navy">@Html.Partial("_Icon", "filter") Apply Filters</button>
+    <div class="filter-summary">
+        Showing @Model.Count property @(Model.Count == 1 ? "manager" : "managers") · Avg @average.ToString("0.0")%
     </div>
-}
+</form>
 
-@if (ViewBag.ChartJson != null)
-{
-    <h3>@ViewBag.StartDate to @ViewBag.EndDate</h3>
+<section class="panel mb-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div>
+            <h2 class="panel-title mb-1">Occupancy Rate by Property Manager</h2>
+            <div class="text-muted small">@start.ToString("dd MMM yyyy") to @end.ToString("dd MMM yyyy")</div>
+        </div>
+        @if (Model.Count > 0)
+        {
+            <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm no-print">Export to PDF</button>
+        }
+    </div>
 
-    if (Model.Count == 0)
+    @if (Model.Count == 0)
     {
-        <p class="text-muted">No leases overlap this period.</p>
+        <div class="chart-empty">No data yet. Add property managers and leases to populate this report.</div>
     }
     else
     {
-        <canvas id="coHostChart" style="max-height:400px;"></canvas>
+        <div class="chart-box"><canvas id="coHostChart" aria-label="Occupancy rate by property manager"></canvas></div>
+    }
 
-        <button type="button" onclick="window.print()" class="btn btn-outline-secondary mt-3">Export to PDF</button>
+    <div class="legend">
+        <span><span class="legend-dot" style="background:#d4a340"></span>Top performer (&ge;90%)</span>
+        <span><span class="legend-dot" style="background:#0f1d3d"></span>Standard</span>
+    </div>
+</section>
 
-        <table class="table table-sm mt-4">
-            <thead>
-                <tr>
-                    <th>Manager</th>
-                    <th>Days occupied</th>
-                    <th>Total days</th>
-                    <th>Occupancy rate</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+@if (Model.Count > 0)
+{
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="table table-hover">
+                <thead>
                     <tr>
-                        <td>@item.ManagerName</td>
-                        <td>@item.DaysOccupied</td>
-                        <td>@item.TotalDays</td>
-                        <td>@item.OccupancyRate%</td>
+                        <th>Manager</th>
+                        <th>Days occupied</th>
+                        <th>Total days</th>
+                        <th>Occupancy rate</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ManagerName</td>
+                            <td>@item.DaysOccupied</td>
+                            <td>@item.TotalDays</td>
+                            <td>
+                                @item.OccupancyRate%
+                                @if (item.OccupancyRate >= AtlasPremierProperties.Controllers.ReportsController.TopPerformerRate)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">Top performer</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section scripts {
+    @if (Model.Count > 0)
+    {
+        <script src="@("https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js")"></script>
         <script>
             // d.labels, d.rates, d.colors come from the controller as JSON
             var d = @Html.Raw(ViewBag.ChartJson);
@@ -68,18 +105,25 @@
                 data: {
                     labels: d.labels,
                     datasets: [{
-                        label: 'Occupancy Rate (%)',
+                        label: 'Occupancy rate (%)',
                         data: d.rates,
-                        backgroundColor: d.colors
+                        backgroundColor: d.colors,
+                        borderRadius: 8,
+                        maxBarThickness: 64
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            max: 100
-                        }
+                            max: 100,
+                            ticks: { callback: function (value) { return value + '%'; } },
+                            grid: { color: '#e5e9f0' }
+                        },
+                        x: { grid: { display: false } }
                     }
                 }
             });

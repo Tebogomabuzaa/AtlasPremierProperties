@@ -1,60 +1,55 @@
 @model IEnumerable<AtlasPremierProperties.Models.Entities.LeaseAgreement>
 @{
-    ViewBag.Title = "Leases";
+    ViewBag.Title = "Lease Agreements";
 }
 
-<h2>Leases</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Lease Agreements</h1>
+        <p class="page-subtitle">Active and archived lease contracts.</p>
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+@Html.Partial("_Alerts")
 
-<p>@Html.ActionLink("Add lease", "Create", null, new { @class = "btn btn-primary" })</p>
+<div class="page-actions">
+    <a href="@Url.Action("Create")" class="btn btn-primary">@Html.Partial("_Icon", "plus") Add Lease</a>
+</div>
 
-@if (!Model.Any())
-{
-    <p class="text-muted">No leases yet. Add a property, a tenant who has passed KYC and a property manager first.</p>
-}
-else
-{
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Property</th>
-                <th>Tenant</th>
-                <th>Manager</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Monthly rent</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td>@item.LeaseID</td>
-                    <td>@item.PropertyAddress</td>
-                    <td>@item.TenantName</td>
-                    <td>@item.ManagerName</td>
-                    <td>@item.LeaseStartDate.ToString("dd MMM yyyy")</td>
-                    <td>@item.LeaseEndDate.ToString("dd MMM yyyy")</td>
-                    <td>R @item.MonthlyRent.ToString("N2")</td>
-                    <td>@Html.Partial("_LeaseStatusBadge", item.LeaseStatus)</td>
-                    <td class="text-nowrap">
-                        @Html.ActionLink("Details", "Details", new { id = item.LeaseID }) |
-                        @Html.ActionLink("Edit", "Edit", new { id = item.LeaseID }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })
-                    </td>
+                    <th>Property</th>
+                    <th>Tenant</th>
+                    <th>Manager</th>
+                    <th>Period</th>
+                    <th>Rent</th>
+                    <th>Status</th>
+                    <th class="actions">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="empty">No lease records yet. Add a property, a tenant who has passed KYC and a property manager first.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.PropertyAddress</td>
+                        <td>@item.TenantName</td>
+                        <td>@item.ManagerName</td>
+                        <td class="text-nowrap">@item.LeaseStartDate.ToString("dd MMM yyyy") – @item.LeaseEndDate.ToString("dd MMM yyyy")</td>
+                        <td>R @item.MonthlyRent.ToString("N2")</td>
+                        <td>@Html.Partial("_LeaseStatusBadge", item.LeaseStatus)</td>
+                        <td class="actions">
+                            @Html.ActionLink("Details", "Details", new { id = item.LeaseID })<span class="sep">|</span>@Html.ActionLink("Edit", "Edit", new { id = item.LeaseID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
