@@ -123,7 +123,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
-    <Compile Include="Controllers\LeaseController.cs" />
+    <Compile Include="Controllers\LeasesController.cs" />
     <Compile Include="Controllers\OwnerPortalController.cs" />
     <Compile Include="Controllers\OwnersController.cs" />
     <Compile Include="Controllers\PropertiesController.cs" />
@@ -177,6 +177,7 @@
     <Content Include="Views\Tenants\Create.cshtml" />
     <Content Include="Views\Tenants\Edit.cshtml" />
     <Content Include="Views\Tenants\Delete.cshtml" />
+    <Content Include="Views\Tenants\Details.cshtml" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -242,6 +243,9 @@
     <Content Include="Views\Leases\Create.cshtml" />
     <Content Include="Views\Leases\Edit.cshtml" />
     <Content Include="Views\Leases\Delete.cshtml" />
+    <Content Include="Views\Leases\Details.cshtml" />
+    <Content Include="Views\Leases\_LeaseForm.cshtml" />
+    <Content Include="Views\Leases\_LeaseStatusBadge.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

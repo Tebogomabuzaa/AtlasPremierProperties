@@ -1,0 +1,73 @@
+@model AtlasPremierProperties.Models.Entities.LeaseAgreement
+@{
+    ViewBag.Title = "Lease #" + Model.LeaseID;
+    var settlements = (List<AtlasPremierProperties.Models.Entities.Settlement>)ViewBag.Settlements;
+}
+
+<h2>Lease #@Model.LeaseID</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Property</dt>
+    <dd class="col-sm-9">@Model.PropertyAddress</dd>
+    <dt class="col-sm-3">Tenant</dt>
+    <dd class="col-sm-9">@Html.ActionLink(Model.TenantName, "Details", "Tenants", new { id = Model.TenantID }, null)</dd>
+    <dt class="col-sm-3">Property manager</dt>
+    <dd class="col-sm-9">@Model.ManagerName</dd>
+    <dt class="col-sm-3">Start date</dt>
+    <dd class="col-sm-9">@Model.LeaseStartDate.ToString("dd MMM yyyy")</dd>
+    <dt class="col-sm-3">End date</dt>
+    <dd class="col-sm-9">@Model.LeaseEndDate.ToString("dd MMM yyyy")</dd>
+    <dt class="col-sm-3">Monthly rent</dt>
+    <dd class="col-sm-9">R @Model.MonthlyRent.ToString("N2")</dd>
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">@Html.Partial("_LeaseStatusBadge", Model.LeaseStatus)</dd>
+</dl>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LeaseID }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Back to leases", "Index", null, new { @class = "btn btn-secondary" })
+</p>
+
+<h3 class="mt-4">Settlements</h3>
+
+@if (!settlements.Any())
+{
+    <p class="text-muted">No settlements for this lease yet. @Html.ActionLink("Create a settlement", "Create", "Settlements")</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Days</th>
+                <th>Gross rent</th>
+                <th>Maintenance</th>
+                <th>Mgmt fee</th>
+                <th>Owner payout</th>
+                <th>Crypto invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in settlements)
+            {
+                <tr>
+                    <td>@s.SettlementID</td>
+                    <td>@s.SettlementDate.ToString("dd MMM yyyy")</td>
+                    <td>@s.DaysOccupied</td>
+                    <td>R @s.GrossRent.ToString("N2")</td>
+                    <td>R @s.MaintenanceCosts.ToString("N2")</td>
+                    <td>R @s.ManagementFee.ToString("N2")</td>
+                    <td><strong>R @s.OwnerPayout.ToString("N2")</strong></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(s.CryptoInvoiceLink))
+                        {
+                            <a href="@s.CryptoInvoiceLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success">Pay</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

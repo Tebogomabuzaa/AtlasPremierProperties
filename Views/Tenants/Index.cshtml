@@ -49,6 +49,7 @@
                 <td>R @item.DeclaredMonthlyIncome.ToString("N2")</td>
                 <td><span class="badge @badge">@item.VerificationStatus</span></td>
                 <td class="text-nowrap">
+                    @Html.ActionLink("Details", "Details", new { id = item.TenantID }) |
                     @Html.ActionLink("Edit", "Edit", new { id = item.TenantID }) |
                     @using (Html.BeginForm("RunKyc", "Tenants", new { id = item.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
                     {
