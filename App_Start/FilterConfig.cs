@@ -1,5 +1,5 @@
-﻿using System.Web;
 using System.Web.Mvc;
+using AtlasPremierProperties.Helpers;
 
 namespace AtlasPremierProperties
 {
@@ -8,7 +8,7 @@ namespace AtlasPremierProperties
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new AuthorizeAttribute());
+            filters.Add(new AuthorizeAttribute { Roles = AuthCookie.StaffRole });
         }
     }
 }

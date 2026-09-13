@@ -28,9 +28,9 @@ namespace AtlasPremierProperties.Repositories
                     "p.PhysicalAddress AS PropertyAddress, " +
                     "t.FirstName & ' ' & t.LastName AS TenantName, " +
                     "pm.FirstName & ' ' & pm.LastName AS ManagerName " +
-                    "FROM (LeaseAgreements la " +
+                    "FROM ((LeaseAgreements la " +
                     "LEFT JOIN Properties p ON la.PropertyID = p.PropertyID) " +
-                    "LEFT JOIN Tenants t ON la.TenantID = t.TenantID " +
+                    "LEFT JOIN Tenants t ON la.TenantID = t.TenantID) " +
                     "LEFT JOIN PropertyManagers pm ON la.ManagerID = pm.ManagerID";
 
                 using (var cmd = new OleDbCommand(sql, conn))
@@ -70,9 +70,9 @@ namespace AtlasPremierProperties.Repositories
                     "p.PhysicalAddress AS PropertyAddress, " +
                     "t.FirstName & ' ' & t.LastName AS TenantName, " +
                     "pm.FirstName & ' ' & pm.LastName AS ManagerName " +
-                    "FROM (LeaseAgreements la " +
+                    "FROM ((LeaseAgreements la " +
                     "LEFT JOIN Properties p ON la.PropertyID = p.PropertyID) " +
-                    "LEFT JOIN Tenants t ON la.TenantID = t.TenantID " +
+                    "LEFT JOIN Tenants t ON la.TenantID = t.TenantID) " +
                     "LEFT JOIN PropertyManagers pm ON la.ManagerID = pm.ManagerID " +
                     "WHERE la.LeaseID = ?";
 
@@ -125,7 +125,7 @@ namespace AtlasPremierProperties.Repositories
                     cmd.Parameters.AddWithValue("@managerID", lease.ManagerID);
                     cmd.Parameters.AddWithValue("@startDate", lease.LeaseStartDate);
                     cmd.Parameters.AddWithValue("@endDate", lease.LeaseEndDate);
-                    cmd.Parameters.AddWithValue("@rent", lease.MonthlyRent);
+                    cmd.Parameters.Add("@rent", OleDbType.Currency).Value = lease.MonthlyRent;
                     cmd.Parameters.AddWithValue("@status", lease.LeaseStatus);
 
                     cmd.ExecuteNonQuery();
@@ -162,7 +162,7 @@ namespace AtlasPremierProperties.Repositories
                     cmd.Parameters.AddWithValue("@managerID", lease.ManagerID);
                     cmd.Parameters.AddWithValue("@startDate", lease.LeaseStartDate);
                     cmd.Parameters.AddWithValue("@endDate", lease.LeaseEndDate);
-                    cmd.Parameters.AddWithValue("@rent", lease.MonthlyRent);
+                    cmd.Parameters.Add("@rent", OleDbType.Currency).Value = lease.MonthlyRent;
                     cmd.Parameters.AddWithValue("@status", lease.LeaseStatus);
                     cmd.Parameters.AddWithValue("@id", lease.LeaseID);
 

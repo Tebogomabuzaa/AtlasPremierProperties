@@ -1,0 +1,73 @@
+@model AtlasPremierProperties.Models.ViewModels.OwnerPortalViewModel
+@{
+    ViewBag.Title = "My Properties";
+}
+
+<h2 class="mb-4">Welcome, @Model.Owner.FullName</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>Total properties</h5>
+            <p class="fs-4 mb-0">@Model.Properties.Count</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>Occupied</h5>
+            <p class="fs-4 mb-0">@Model.OccupiedCount</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>Vacant</h5>
+            <p class="fs-4 mb-0">@Model.VacantCount</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>Total monthly rent</h5>
+            <p class="fs-4 mb-0">R @Model.TotalMonthlyRent.ToString("N0")</p>
+        </div>
+    </div>
+</div>
+
+<h4>My properties</h4>
+
+@if (Model.Properties.Count == 0)
+{
+    <p class="text-muted">No properties are linked to your account yet.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Address</th>
+                <th>Monthly rent</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var property in Model.Properties)
+            {
+                <tr>
+                    <td>@property.PropertyDescription</td>
+                    <td>@property.PhysicalAddress</td>
+                    <td>R @property.MonthlyRent.ToString("N0")</td>
+                    <td>
+                        @if (property.VacancyStatus)
+                        {
+                            <span class="badge bg-warning text-dark">Vacant</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Occupied</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

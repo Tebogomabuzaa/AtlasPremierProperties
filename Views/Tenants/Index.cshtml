@@ -1,0 +1,63 @@
+@model IEnumerable<AtlasPremierProperties.Models.Entities.Tenant>
+@{
+    ViewBag.Title = "Tenants";
+}
+
+<h2>Tenants</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["KycResult"] != null)
+{
+    var approved = (string)TempData["KycResult"] == "Approved";
+    <div class="alert @(approved ? "alert-success" : "alert-danger")">
+        <strong>KYC @TempData["KycResult"]:</strong> @TempData["KycMessage"]
+    </div>
+}
+
+<p>@Html.ActionLink("Add tenant", "Create", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Nationality</th>
+            <th>Income</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var badge = item.VerificationStatus == "Approved" ? "bg-success"
+                : item.VerificationStatus == "Declined" ? "bg-danger"
+                : "bg-secondary";
+            <tr>
+                <td>@item.TenantID</td>
+                <td>@item.FullName</td>
+                <td>@item.EmailAddress</td>
+                <td>@item.Nationality</td>
+                <td>R @item.DeclaredMonthlyIncome.ToString("N2")</td>
+                <td><span class="badge @badge">@item.VerificationStatus</span></td>
+                <td class="text-nowrap">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.TenantID }) |
+                    @using (Html.BeginForm("RunKyc", "Tenants", new { id = item.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Run KYC</button>
+                    }
+                    | @Html.ActionLink("Delete", "Delete", new { id = item.TenantID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

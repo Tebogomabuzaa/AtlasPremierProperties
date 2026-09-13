@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
+using System.Linq;
 using AtlasPremierProperties.Helpers;
 
 namespace AtlasPremierProperties.Services
@@ -31,25 +32,27 @@ namespace AtlasPremierProperties.Services
             _db = new DatabaseHelper();
         }
 
+        // Occupancy = days each manager's leases overlap the period, divided by the days in the period.
         public List<CoHostStats> GetCoHostPerformance(
             DateTime start,
             DateTime end)
         {
-            var stats = new List<CoHostStats>();
-
+            start = start.Date;
+            end = end.Date;
             int totalDays = (end - start).Days + 1;
+
+            var byManager = new Dictionary<int, CoHostStats>();
 
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
 
                 string sql =
-                     "SELECT pm.FirstName & ' ' & pm.LastName AS ManagerName, " +
-                     "COUNT(*) AS LeaseDays " +
+                     "SELECT pm.ManagerID, pm.FirstName & ' ' & pm.LastName AS ManagerName, " +
+                     "la.LeaseStartDate, la.LeaseEndDate " +
                      "FROM LeaseAgreements AS la " +
                      "INNER JOIN PropertyManagers AS pm ON la.ManagerID = pm.ManagerID " +
-                     "WHERE la.LeaseStartDate <= ? AND la.LeaseEndDate >= ? " +
-                     "GROUP BY pm.FirstName & ' ' & pm.LastName";
+                     "WHERE la.LeaseStartDate <= ? AND la.LeaseEndDate >= ?";
 
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
@@ -60,18 +63,37 @@ namespace AtlasPremierProperties.Services
                     {
                         while (reader.Read())
                         {
-                            stats.Add(new CoHostStats
+                            int managerId = Convert.ToInt32(reader["ManagerID"]);
+                            DateTime leaseStart = Convert.ToDateTime(reader["LeaseStartDate"]).Date;
+                            DateTime leaseEnd = Convert.ToDateTime(reader["LeaseEndDate"]).Date;
+
+                            DateTime overlapStart = leaseStart > start ? leaseStart : start;
+                            DateTime overlapEnd = leaseEnd < end ? leaseEnd : end;
+
+                            CoHostStats stats;
+                            if (!byManager.TryGetValue(managerId, out stats))
                             {
-                                ManagerName = reader["ManagerName"].ToString(),
-                                TotalDays = totalDays,
-                                DaysOccupied = Convert.ToInt32(reader["LeaseDays"])
-                            });
+                                stats = new CoHostStats
+                                {
+                                    ManagerName = reader["ManagerName"].ToString(),
+                                    TotalDays = totalDays
+                                };
+                                byManager.Add(managerId, stats);
+                            }
+
+                            stats.DaysOccupied += (overlapEnd - overlapStart).Days + 1;
                         }
                     }
                 }
             }
 
-            return stats;
+            // A manager with several leases can exceed the period length, so cap occupancy at 100%.
+            foreach (var stats in byManager.Values)
+            {
+                stats.DaysOccupied = Math.Min(stats.DaysOccupied, totalDays);
+            }
+
+            return byManager.Values.OrderByDescending(s => s.OccupancyRate).ToList();
         }
     }
 }

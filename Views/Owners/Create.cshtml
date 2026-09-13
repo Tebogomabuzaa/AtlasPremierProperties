@@ -1,5 +1,4 @@
 @model AtlasPremierProperties.Models.Entities.Owners
-
 @{
     ViewBag.Title = "Add Owner";
 }
@@ -9,25 +8,38 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <p>
-        @Html.LabelFor(m => m.FirstName)
-        @Html.TextBoxFor(m => m.FirstName)
-    </p>
-    <p>
-        @Html.LabelFor(m => m.LastName)
-        @Html.TextBoxFor(m => m.LastName)
-    </p>
-    <p>
-        @Html.LabelFor(m => m.EmailAddress)
-        @Html.TextBoxFor(m => m.EmailAddress)
-    </p>
-    <p>
-        @Html.LabelFor(m => m.PhoneNumber)
-        @Html.TextBoxFor(m => m.PhoneNumber)
-    </p>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.LastName, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.EmailAddress, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control", type = "email" })
+        @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.PortalPassword, new { @class = "form-label" })
+        @Html.PasswordFor(m => m.PortalPassword, new { @class = "form-control", autocomplete = "new-password" })
+        <div class="form-text">Optional. Lets the owner sign in to the owner portal with their email address.</div>
+        @Html.ValidationMessageFor(m => m.PortalPassword, "", new { @class = "text-danger" })
+    </div>
 
-    <button type="submit">Save</button>
-    @Html.ActionLink("Cancel", "Index")
+    <button type="submit" class="btn btn-primary">Save</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
 }

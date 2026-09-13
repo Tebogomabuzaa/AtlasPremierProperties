@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Web.Mvc;
 using AtlasPremierProperties.Models.Entities;
 using AtlasPremierProperties.Repositories;
@@ -29,32 +30,41 @@ namespace AtlasPremierProperties.Controllers
         // Shows the Create form with a dropdown of leases
         public ActionResult Create()
         {
-            ViewBag.Leases = new SelectList(
-                _leaseRepo.GetAll(), "LeaseID", "PropertyAddress");
-
+            PopulateLeases();
             return View();
         }
 
-        // Calculates the settlement, generates the invoice link, and saves it
+        // Calculates the settlement from the lease's monthly rent, generates the invoice link, and saves it
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(
-            int leaseId,
-            decimal grossRent,
-            decimal maintenanceCosts,
-            int daysOccupied)
+        public ActionResult Create(int? leaseId, decimal? maintenanceCosts, int? daysOccupied)
         {
+            var lease = leaseId.HasValue ? _leaseRepo.GetById(leaseId.Value) : null;
+            if (lease == null)
+            {
+                ModelState.AddModelError("", "Select a lease.");
+            }
+            if (!maintenanceCosts.HasValue || !daysOccupied.HasValue)
+            {
+                ModelState.AddModelError("", "Enter the maintenance costs and days occupied.");
+            }
+            if (!ModelState.IsValid)
+            {
+                PopulateLeases();
+                return View();
+            }
+
             try
             {
                 var result = _settlementService.Calculate(
-                    grossRent, maintenanceCosts, daysOccupied);
+                    lease.MonthlyRent, maintenanceCosts.Value, daysOccupied.Value);
 
                 string invoiceLink = _cryptoService.GenerateInvoiceLink(
-                    leaseId, result.OwnerPayout);
+                    lease.LeaseID, result.OwnerPayout);
 
                 var settlement = new Settlement
                 {
-                    LeaseID = leaseId,
+                    LeaseID = lease.LeaseID,
                     GrossRent = result.GrossRent,
                     MaintenanceCosts = result.MaintenanceCosts,
                     NetAmount = result.NetAmount,
@@ -77,12 +87,20 @@ namespace AtlasPremierProperties.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-
-                ViewBag.Leases = new SelectList(
-                    _leaseRepo.GetAll(), "LeaseID", "PropertyAddress");
-
+                PopulateLeases();
                 return View();
             }
+        }
+
+        private void PopulateLeases()
+        {
+            var leases = _leaseRepo.GetAll().Select(l => new
+            {
+                l.LeaseID,
+                Display = "#" + l.LeaseID + " - " + l.PropertyAddress + " (" + l.TenantName.Trim() + ")"
+            });
+
+            ViewBag.Leases = new SelectList(leases, "LeaseID", "Display");
         }
     }
 }
