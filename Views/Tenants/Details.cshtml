@@ -1,0 +1,70 @@
+@model AtlasPremierProperties.Models.Entities.Tenant
+@{
+    ViewBag.Title = Model.FullName;
+    var leases = (List<AtlasPremierProperties.Models.Entities.LeaseAgreement>)ViewBag.Leases;
+    var badge = Model.VerificationStatus == "Approved" ? "bg-success"
+        : Model.VerificationStatus == "Declined" ? "bg-danger"
+        : "bg-secondary";
+}
+
+<h2>@Model.FullName</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Tenant ID</dt>
+    <dd class="col-sm-9">@Model.TenantID</dd>
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.EmailAddress</dd>
+    <dt class="col-sm-3">Passport / ID number</dt>
+    <dd class="col-sm-9">@Model.PassportIDNumber</dd>
+    <dt class="col-sm-3">Nationality</dt>
+    <dd class="col-sm-9">@Model.Nationality</dd>
+    <dt class="col-sm-3">Declared monthly income</dt>
+    <dd class="col-sm-9">R @Model.DeclaredMonthlyIncome.ToString("N2")</dd>
+    <dt class="col-sm-3">KYC status</dt>
+    <dd class="col-sm-9"><span class="badge @badge">@Model.VerificationStatus</span></dd>
+</dl>
+
+<div class="mb-4">
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TenantID }, new { @class = "btn btn-primary" })
+    @using (Html.BeginForm("RunKyc", "Tenants", new { id = Model.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
+    {
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-outline-primary">Run KYC</button>
+    }
+    @Html.ActionLink("Back to tenants", "Index", null, new { @class = "btn btn-secondary" })
+</div>
+
+<h3>Leases</h3>
+
+@if (!leases.Any())
+{
+    <p class="text-muted">This tenant has no leases.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Property</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Monthly rent</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lease in leases)
+            {
+                <tr>
+                    <td>@Html.ActionLink(lease.LeaseID.ToString(), "Details", "Leases", new { id = lease.LeaseID }, null)</td>
+                    <td>@lease.PropertyAddress</td>
+                    <td>@lease.LeaseStartDate.ToString("dd MMM yyyy")</td>
+                    <td>@lease.LeaseEndDate.ToString("dd MMM yyyy")</td>
+                    <td>R @lease.MonthlyRent.ToString("N2")</td>
+                    <td>@Html.Partial("~/Views/Leases/_LeaseStatusBadge.cshtml", lease.LeaseStatus)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Web.Mvc;
 using AtlasPremierProperties.Models.Entities;
 using AtlasPremierProperties.Repositories;
@@ -10,6 +11,7 @@ namespace AtlasPremierProperties.Controllers
     {
         private readonly TenantRepository _repo = new TenantRepository();
         private readonly KycService _kycService = new KycService();
+        private readonly LeaseRepository _leases = new LeaseRepository();
 
         public ActionResult Index()
         {
@@ -20,6 +22,8 @@ namespace AtlasPremierProperties.Controllers
         {
             var tenant = _repo.GetById(id);
             if (tenant == null) return HttpNotFound();
+
+            ViewBag.Leases = _leases.GetAll().Where(l => l.TenantID == id).ToList();
             return View(tenant);
         }
 
