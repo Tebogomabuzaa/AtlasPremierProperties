@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+using System;
+using System.Configuration;
 using System.Data.OleDb;
 
 namespace AtlasPremierProperties.Helpers
@@ -20,6 +21,12 @@ namespace AtlasPremierProperties.Helpers
         public OleDbConnection GetConnection()
         {
             return new OleDbConnection(_connectionString);
+        }
+
+        // OleDb rejects a null parameter ("has no default value"), so optional fields must be sent as DBNull.
+        public static object ToDbValue(object value)
+        {
+            return value ?? DBNull.Value;
         }
     }
 }

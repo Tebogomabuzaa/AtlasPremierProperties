@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
+using AtlasPremierProperties.Helpers;
 using AtlasPremierProperties.Models.Entities;
 using AtlasPremierProperties.Repositories;
 
@@ -7,9 +8,7 @@ namespace AtlasPremierProperties.Controllers
 {
     public class OwnersController : Controller
     {
-
         private readonly OwnersRepository _ownerRepo;
-
 
         public OwnersController()
         {
@@ -31,7 +30,7 @@ namespace AtlasPremierProperties.Controllers
         // Handles the submitted Create form
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Owners owners)
+        public ActionResult Create([Bind(Exclude = "PasswordHash")] Owners owners)
         {
             if (!ModelState.IsValid)
             {
@@ -40,6 +39,7 @@ namespace AtlasPremierProperties.Controllers
 
             try
             {
+                SetPortalPassword(owners);
                 int newId = _ownerRepo.Add(owners);
                 TempData["Success"] =
                     "Owner successfully added. Owner ID: " + newId;
@@ -47,7 +47,6 @@ namespace AtlasPremierProperties.Controllers
             }
             catch (Exception ex)
             {
-                
                 ModelState.AddModelError("", ex.Message);
                 return View(owners);
             }
@@ -65,17 +64,26 @@ namespace AtlasPremierProperties.Controllers
         // Saves the updated owner details
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Owners owners)
+        public ActionResult Edit([Bind(Exclude = "PasswordHash")] Owners owners)
         {
             if (!ModelState.IsValid) return View(owners);
 
-            _ownerRepo.Update(owners);
-            TempData["Success"] =
-                "Owner ID " + owners.OwnerID + " successfully updated.";
-            return RedirectToAction("Index");
+            try
+            {
+                SetPortalPassword(owners);
+                _ownerRepo.Update(owners);
+                TempData["Success"] =
+                    "Owner ID " + owners.OwnerID + " successfully updated.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(owners);
+            }
         }
 
-        //Confirmation page before deleting
+        // Confirmation page before deleting
         public ActionResult Delete(int id)
         {
             var owners = _ownerRepo.GetById(id);
@@ -84,7 +92,7 @@ namespace AtlasPremierProperties.Controllers
             return View(owners);
         }
 
-        // Handle sthe delete request after confirmation
+        // Handles the delete request after confirmation
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -97,9 +105,16 @@ namespace AtlasPremierProperties.Controllers
             }
             catch (Exception ex)
             {
-                
                 TempData["Error"] = ex.Message;
                 return RedirectToAction("Index");
+            }
+        }
+
+        private static void SetPortalPassword(Owners owners)
+        {
+            if (!string.IsNullOrEmpty(owners.PortalPassword))
+            {
+                owners.PasswordHash = PasswordHasher.Hash(owners.PortalPassword);
             }
         }
     }

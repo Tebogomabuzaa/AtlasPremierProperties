@@ -1,22 +1,21 @@
 @model AtlasPremierProperties.Models.Entities.Owners
-
 @{
     ViewBag.Title = "Delete Owner";
 }
 
 <h2>Delete Owner</h2>
 
-<p>Are you sure you want to delete this owner?</p>
+<div class="alert alert-warning">Are you sure you want to delete this owner?</div>
 
-<dl>
-    <dt>Owner ID</dt>
-    <dd>@Model.OwnerID</dd>
-    <dt>Full Name</dt>
-    <dd>@Model.FullName</dd>
-    <dt>Email</dt>
-    <dd>@Model.EmailAddress</dd>
-    <dt>Phone</dt>
-    <dd>@Model.PhoneNumber</dd>
+<dl class="row">
+    <dt class="col-sm-3">Owner ID</dt>
+    <dd class="col-sm-9">@Model.OwnerID</dd>
+    <dt class="col-sm-3">Full name</dt>
+    <dd class="col-sm-9">@Model.FullName</dd>
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.EmailAddress</dd>
+    <dt class="col-sm-3">Phone</dt>
+    <dd class="col-sm-9">@Model.PhoneNumber</dd>
 </dl>
 
 @using (Html.BeginForm())
@@ -24,7 +23,6 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.OwnerID)
 
-    <button type="submit">Delete</button>
-    @Html.ActionLink("Cancel", "Index")
+    <button type="submit" class="btn btn-danger">Delete</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
 }
-    

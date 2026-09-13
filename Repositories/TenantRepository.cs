@@ -16,7 +16,7 @@ namespace AtlasPremierProperties.Repositories
             using (var conn = _db.GetConnection())
             {
                 conn.Open();
-                using (var cmd = new OleDbCommand("SELECT * FROM Tenants", conn))
+                using (var cmd = new OleDbCommand("SELECT * FROM Tenants ORDER BY LastName, FirstName", conn))
                 using (var r = cmd.ExecuteReader())
                 {
                     while (r.Read())
@@ -61,9 +61,9 @@ namespace AtlasPremierProperties.Repositories
                     cmd.Parameters.AddWithValue("@firstName", t.FirstName);
                     cmd.Parameters.AddWithValue("@lastName", t.LastName);
                     cmd.Parameters.AddWithValue("@email", t.EmailAddress);
-                    cmd.Parameters.AddWithValue("@passport", t.PassportIDNumber);
-                    cmd.Parameters.AddWithValue("@nationality", t.Nationality);
-                    cmd.Parameters.AddWithValue("@income", t.DeclaredMonthlyIncome);
+                    cmd.Parameters.AddWithValue("@passport", DatabaseHelper.ToDbValue(t.PassportIDNumber));
+                    cmd.Parameters.AddWithValue("@nationality", DatabaseHelper.ToDbValue(t.Nationality));
+                    cmd.Parameters.Add("@income", OleDbType.Currency).Value = t.DeclaredMonthlyIncome;
                     cmd.Parameters.AddWithValue("@status", t.VerificationStatus ?? "Pending");
                     cmd.ExecuteNonQuery();
                 }
@@ -94,13 +94,36 @@ namespace AtlasPremierProperties.Repositories
                     cmd.Parameters.AddWithValue("@firstName", t.FirstName);
                     cmd.Parameters.AddWithValue("@lastName", t.LastName);
                     cmd.Parameters.AddWithValue("@email", t.EmailAddress);
-                    cmd.Parameters.AddWithValue("@passport", t.PassportIDNumber);
-                    cmd.Parameters.AddWithValue("@nationality", t.Nationality);
-                    cmd.Parameters.AddWithValue("@income", t.DeclaredMonthlyIncome);
-                    cmd.Parameters.AddWithValue("@status", t.VerificationStatus);
+                    cmd.Parameters.AddWithValue("@passport", DatabaseHelper.ToDbValue(t.PassportIDNumber));
+                    cmd.Parameters.AddWithValue("@nationality", DatabaseHelper.ToDbValue(t.Nationality));
+                    cmd.Parameters.Add("@income", OleDbType.Currency).Value = t.DeclaredMonthlyIncome;
+                    cmd.Parameters.AddWithValue("@status", t.VerificationStatus ?? "Pending");
                     cmd.Parameters.AddWithValue("@id", t.TenantID);
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void UpdateVerificationStatus(int tenantId, string status)
+        {
+            using (var conn = _db.GetConnection())
+            using (var cmd = new OleDbCommand("UPDATE Tenants SET VerificationStatus = ? WHERE TenantID = ?", conn))
+            {
+                cmd.Parameters.AddWithValue("@status", status);
+                cmd.Parameters.AddWithValue("@id", tenantId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public bool HasLeases(int tenantId)
+        {
+            using (var conn = _db.GetConnection())
+            using (var cmd = new OleDbCommand("SELECT COUNT(*) FROM LeaseAgreements WHERE TenantID = ?", conn))
+            {
+                cmd.Parameters.AddWithValue("@id", tenantId);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
             }
         }
 

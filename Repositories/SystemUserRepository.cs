@@ -42,17 +42,26 @@ namespace AtlasPremierProperties.Repositories
             }
         }
 
-        public void Add(string username, string passwordHash, string role)
+        // Returns the new UserID
+        public int Add(string username, string passwordHash, string role)
         {
             using (var conn = _db.GetConnection())
-            using (var cmd = new OleDbCommand(
-                "INSERT INTO SystemUsers (Username, PasswordHash, UserRole) VALUES (?, ?, ?)", conn))
             {
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@hash", passwordHash);
-                cmd.Parameters.AddWithValue("@role", role);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+
+                using (var cmd = new OleDbCommand(
+                    "INSERT INTO SystemUsers (Username, PasswordHash, UserRole) VALUES (?, ?, ?)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@hash", passwordHash);
+                    cmd.Parameters.AddWithValue("@role", role);
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (var idCmd = new OleDbCommand("SELECT @@IDENTITY", conn))
+                {
+                    return Convert.ToInt32(idCmd.ExecuteScalar());
+                }
             }
         }
     }
