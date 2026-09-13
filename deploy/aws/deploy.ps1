@@ -73,7 +73,7 @@ $publishDir = Join-Path $work 'site'
 $zip = Join-Path $work 'site.zip'
 $project = Join-Path $repoRoot 'AtlasPremierProperties.csproj'
 
-& $msbuild $project -t:Restore -p:RestorePackagesConfig=true -v:minimal -nologo
+& $msbuild (Join-Path $repoRoot 'AtlasPremierProperties.sln') -t:Restore -p:RestorePackagesConfig=true -v:minimal -nologo
 if ($LASTEXITCODE -ne 0) { throw 'NuGet restore failed.' }
 & $msbuild $project -p:Configuration=Release -p:DeployOnBuild=true -p:DeployDefaultTarget=WebPublish -p:WebPublishMethod=FileSystem "-p:PublishUrl=$publishDir" -p:DeleteExistingFiles=true -v:minimal -nologo
 if ($LASTEXITCODE -ne 0) { throw 'Publishing the app failed.' }
