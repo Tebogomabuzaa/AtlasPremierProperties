@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
@@ -27,7 +27,7 @@ namespace AtlasPremierProperties.Repositories
 
             using (var conn = _dbHelper.GetConnection())
             using (var cmd = new OleDbCommand(
-                "SELECT ManagerID, FirstName, LastName, Email, PhoneNumber, DateHired " +
+                "SELECT ManagerID, FirstName, LastName, EmailAddress, PhoneNumber, DateHired " +
                 "FROM PropertyManagers ORDER BY LastName, FirstName", conn))
             {
                 conn.Open();
@@ -47,7 +47,7 @@ namespace AtlasPremierProperties.Repositories
         {
             using (var conn = _dbHelper.GetConnection())
             using (var cmd = new OleDbCommand(
-                "SELECT ManagerID, FirstName, LastName, Email, PhoneNumber, DateHired " +
+                "SELECT ManagerID, FirstName, LastName, EmailAddress, PhoneNumber, DateHired " +
                 "FROM PropertyManagers WHERE ManagerID = ?", conn))
             {
                 cmd.Parameters.AddWithValue("@ManagerID", managerId);
@@ -66,7 +66,7 @@ namespace AtlasPremierProperties.Repositories
 
         public bool EmailExists(string email, int? excludeManagerId = null)
         {
-            string sql = "SELECT COUNT(*) FROM PropertyManagers WHERE Email = ?";
+            string sql = "SELECT COUNT(*) FROM PropertyManagers WHERE EmailAddress = ?";
             if (excludeManagerId.HasValue)
             {
                 sql += " AND ManagerID <> ?";
@@ -91,7 +91,7 @@ namespace AtlasPremierProperties.Repositories
         {
             using (var conn = _dbHelper.GetConnection())
             using (var cmd = new OleDbCommand(
-                "INSERT INTO PropertyManagers (FirstName, LastName, Email, PhoneNumber, DateHired) " +
+                "INSERT INTO PropertyManagers (FirstName, LastName, EmailAddress, PhoneNumber, DateHired) " +
                 "VALUES (?, ?, ?, ?, ?)", conn))
             {
                 cmd.Parameters.AddWithValue("@FirstName", manager.FirstName);
@@ -114,7 +114,7 @@ namespace AtlasPremierProperties.Repositories
         {
             using (var conn = _dbHelper.GetConnection())
             using (var cmd = new OleDbCommand(
-                "UPDATE PropertyManagers SET FirstName = ?, LastName = ?, Email = ?, " +
+                "UPDATE PropertyManagers SET FirstName = ?, LastName = ?, EmailAddress = ?, " +
                 "PhoneNumber = ?, DateHired = ? WHERE ManagerID = ?", conn))
             {
                 cmd.Parameters.AddWithValue("@FirstName", manager.FirstName);
@@ -143,14 +143,15 @@ namespace AtlasPremierProperties.Repositories
 
         private static PropertyManager MapReaderToManager(IDataRecord reader)
         {
+            // PhoneNumber and DateHired were added after the table existed, so rows edited directly in Access may have nulls.
             return new PropertyManager
             {
                 ManagerID = reader.GetInt32(0),
                 FirstName = reader.GetString(1),
                 LastName = reader.GetString(2),
                 Email = reader.GetString(3),
-                PhoneNumber = reader.GetString(4),
-                DateHired = reader.GetDateTime(5)
+                PhoneNumber = reader.IsDBNull(4) ? null : reader.GetString(4),
+                DateHired = reader.IsDBNull(5) ? DateTime.MinValue : reader.GetDateTime(5)
             };
         }
     }
