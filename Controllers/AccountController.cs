@@ -9,11 +9,12 @@ namespace AtlasPremierProperties.Controllers
     public class AccountController : Controller
     {
         private readonly SystemUserRepository _users = new SystemUserRepository();
+        private readonly OwnersRepository _owners = new OwnersRepository();
 
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            if (Request.IsAuthenticated) return RedirectToAction("Index", "Home");
+            if (User.IsInRole(AuthCookie.StaffRole)) return RedirectToAction("Index", "Home");
 
             ViewBag.ReturnUrl = returnUrl;
             ViewBag.NeedsSetup = !_users.Any();
@@ -35,17 +36,47 @@ namespace AtlasPremierProperties.Controllers
                 return View(model);
             }
 
-            FormsAuthentication.SetAuthCookie(user.Username, false);
+            AuthCookie.SignIn(Response, user.Username, AuthCookie.StaffRole, user.UserID);
             if (Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
             return RedirectToAction("Index", "Home");
         }
 
+        [AllowAnonymous]
+        public ActionResult OwnerLogin(string returnUrl)
+        {
+            if (User.IsInRole(AuthCookie.OwnerRole)) return RedirectToAction("Index", "OwnerPortal");
+
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult OwnerLogin(OwnerLoginViewModel model, string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            if (!ModelState.IsValid) return View(model);
+
+            var owner = _owners.GetByEmail(model.Email);
+            if (owner == null || !PasswordHasher.Verify(model.Password, owner.PasswordHash))
+            {
+                ModelState.AddModelError("", "Invalid email or password.");
+                return View(model);
+            }
+
+            AuthCookie.SignIn(Response, owner.FullName, AuthCookie.OwnerRole, owner.OwnerID);
+            if (Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
+            return RedirectToAction("Index", "OwnerPortal");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Landing");
         }
 
         [AllowAnonymous]
@@ -63,8 +94,8 @@ namespace AtlasPremierProperties.Controllers
             if (!CanRunSetup()) return HttpNotFound();
             if (!ModelState.IsValid) return View(model);
 
-            _users.Add(model.Username, PasswordHasher.Hash(model.Password), "Administrator");
-            FormsAuthentication.SetAuthCookie(model.Username, false);
+            int userId = _users.Add(model.Username, PasswordHasher.Hash(model.Password), "Administrator");
+            AuthCookie.SignIn(Response, model.Username, AuthCookie.StaffRole, userId);
             return RedirectToAction("Index", "Home");
         }
 

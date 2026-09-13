@@ -1,15 +1,16 @@
-@model AtlasPremierProperties.Models.Entities.Owners
+@model AtlasPremierProperties.Models.Entities.Tenant
 @{
-    ViewBag.Title = "Edit Owner";
+    ViewBag.Title = "Edit Tenant";
 }
 
-<h2>Edit Owner</h2>
+<h2>Edit Tenant</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(m => m.OwnerID)
+    @Html.HiddenFor(m => m.TenantID)
+    @Html.HiddenFor(m => m.VerificationStatus)
 
     <div class="mb-3">
         @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
@@ -27,17 +28,20 @@
         @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
     </div>
     <div class="mb-3">
-        @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+        @Html.LabelFor(m => m.PassportIDNumber, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.PassportIDNumber, new { @class = "form-control" })
     </div>
     <div class="mb-3">
-        @Html.LabelFor(m => m.PortalPassword, new { @class = "form-label" })
-        @Html.PasswordFor(m => m.PortalPassword, new { @class = "form-control", autocomplete = "new-password" })
-        <div class="form-text">Leave blank to keep the current password. Typing a new one gives or resets owner portal access.</div>
-        @Html.ValidationMessageFor(m => m.PortalPassword, "", new { @class = "text-danger" })
+        @Html.LabelFor(m => m.Nationality, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Nationality, new { @class = "form-control" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.DeclaredMonthlyIncome, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.DeclaredMonthlyIncome, new { @class = "form-control", type = "number", step = "0.01", min = "0" })
+        @Html.ValidationMessageFor(m => m.DeclaredMonthlyIncome, "", new { @class = "text-danger" })
     </div>
 
-    <button type="submit" class="btn btn-primary">Save changes</button>
+    <button type="submit" class="btn btn-primary">Save</button>
     @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
 }
 

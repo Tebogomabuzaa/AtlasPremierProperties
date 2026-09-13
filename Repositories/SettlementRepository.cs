@@ -68,14 +68,16 @@ namespace AtlasPremierProperties.Repositories
 
                 using (var cmd = new OleDbCommand(sql, conn))
                 {
+                    // Access rejects untyped decimals with cents and DateTimes with milliseconds ("Data type mismatch"),
+                    // so money goes in as Currency and the timestamp as Date.
                     cmd.Parameters.AddWithValue("@leaseId", settlement.LeaseID);
-                    cmd.Parameters.AddWithValue("@grossRent", settlement.GrossRent);
-                    cmd.Parameters.AddWithValue("@maintenance", settlement.MaintenanceCosts);
-                    cmd.Parameters.AddWithValue("@netAmount", settlement.NetAmount);
-                    cmd.Parameters.AddWithValue("@managementFee", settlement.ManagementFee);
-                    cmd.Parameters.AddWithValue("@ownerPayout", settlement.OwnerPayout);
+                    cmd.Parameters.Add("@grossRent", OleDbType.Currency).Value = settlement.GrossRent;
+                    cmd.Parameters.Add("@maintenance", OleDbType.Currency).Value = settlement.MaintenanceCosts;
+                    cmd.Parameters.Add("@netAmount", OleDbType.Currency).Value = settlement.NetAmount;
+                    cmd.Parameters.Add("@managementFee", OleDbType.Currency).Value = settlement.ManagementFee;
+                    cmd.Parameters.Add("@ownerPayout", OleDbType.Currency).Value = settlement.OwnerPayout;
                     cmd.Parameters.AddWithValue("@daysOccupied", settlement.DaysOccupied);
-                    cmd.Parameters.AddWithValue("@settlementDate", settlement.SettlementDate);
+                    cmd.Parameters.Add("@settlementDate", OleDbType.Date).Value = settlement.SettlementDate;
                     cmd.Parameters.AddWithValue("@invoiceLink", settlement.CryptoInvoiceLink);
 
                     cmd.ExecuteNonQuery();

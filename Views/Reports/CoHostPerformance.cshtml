@@ -1,47 +1,88 @@
-﻿@model List<AtlasPremierProperties.Services.CoHostStats>
+@model List<AtlasPremierProperties.Services.CoHostStats>
+@{
+    ViewBag.Title = "Co-Host Performance";
+}
 
 <h2>Co-Host Performance Metrics</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("CoHostPerformance", "Reports", FormMethod.Post, new { @class = "row g-3 mb-4" }))
 {
-    <label>Start Date: <input type="date" name="startDate" required /></label>
-    <label>End Date: <input type="date" name="endDate" required /></label>
-    <button type="submit">Generate Report</button>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger col-12" })
+
+    <div class="col-auto">
+        <label class="form-label" for="startDate">Start date</label>
+        <input type="date" id="startDate" name="startDate" class="form-control" required />
+    </div>
+    <div class="col-auto">
+        <label class="form-label" for="endDate">End date</label>
+        <input type="date" id="endDate" name="endDate" class="form-control" required />
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Generate report</button>
+    </div>
 }
 
 @if (ViewBag.ChartJson != null)
 {
     <h3>@ViewBag.StartDate to @ViewBag.EndDate</h3>
 
-    <canvas id="coHostChart" style="max-height:400px;"></canvas>
+    if (Model.Count == 0)
+    {
+        <p class="text-muted">No leases overlap this period.</p>
+    }
+    else
+    {
+        <canvas id="coHostChart" style="max-height:400px;"></canvas>
 
-    <button onclick="window.print()">Export to PDF</button>
+        <button type="button" onclick="window.print()" class="btn btn-outline-secondary mt-3">Export to PDF</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <table class="table table-sm mt-4">
+            <thead>
+                <tr>
+                    <th>Manager</th>
+                    <th>Days occupied</th>
+                    <th>Total days</th>
+                    <th>Occupancy rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ManagerName</td>
+                        <td>@item.DaysOccupied</td>
+                        <td>@item.TotalDays</td>
+                        <td>@item.OccupancyRate%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <script>
-        // d.labels, d.rates, d.colors come from the controller as JSON
-        var d = @Html.Raw(ViewBag.ChartJson);
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // d.labels, d.rates, d.colors come from the controller as JSON
+            var d = @Html.Raw(ViewBag.ChartJson);
 
-        new Chart(document.getElementById('coHostChart'), {
-            type: 'bar',
-            data: {
-                labels: d.labels,
-                datasets: [{
-                    label: 'Occupancy Rate (%)',
-                    data: d.rates,
-                    backgroundColor: d.colors
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
+            new Chart(document.getElementById('coHostChart'), {
+                type: 'bar',
+                data: {
+                    labels: d.labels,
+                    datasets: [{
+                        label: 'Occupancy Rate (%)',
+                        data: d.rates,
+                        backgroundColor: d.colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
                     }
                 }
-            }
-        });
-    </script>
+            });
+        </script>
+    }
 }

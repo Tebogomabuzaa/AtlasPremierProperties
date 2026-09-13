@@ -1,0 +1,44 @@
+@model AtlasPremierProperties.Models.Entities.Property
+@{
+    ViewBag.Title = "Edit Property";
+}
+
+<h2>Edit Property</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.PropertyID)
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.PropertyDescription, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.PropertyDescription, new { @class = "form-control" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.PhysicalAddress, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.PhysicalAddress, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.PhysicalAddress, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.OwnerID, new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.OwnerID, (SelectList)ViewBag.Owners, "-- Select owner --", new { @class = "form-select" })
+        @Html.ValidationMessageFor(m => m.OwnerID, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        @Html.LabelFor(m => m.MonthlyRent, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.MonthlyRent, new { @class = "form-control", type = "number", step = "0.01", min = "0" })
+        @Html.ValidationMessageFor(m => m.MonthlyRent, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3 form-check">
+        @Html.CheckBoxFor(m => m.VacancyStatus, new { @class = "form-check-input" })
+        @Html.LabelFor(m => m.VacancyStatus, new { @class = "form-check-label" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
