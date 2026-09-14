@@ -19,7 +19,7 @@
     <dt class="col-sm-3">Nationality</dt>
     <dd class="col-sm-9">@Model.Nationality</dd>
     <dt class="col-sm-3">Declared monthly income</dt>
-    <dd class="col-sm-9">R @Model.DeclaredMonthlyIncome.ToString("N2")</dd>
+    <dd class="col-sm-9">R&nbsp;@Model.DeclaredMonthlyIncome.ToString("N2")</dd>
     <dt class="col-sm-3">KYC status</dt>
     <dd class="col-sm-9"><span class="badge @badge">@Model.VerificationStatus</span></dd>
 </dl>
@@ -61,7 +61,7 @@ else
                     <td>@lease.PropertyAddress</td>
                     <td>@lease.LeaseStartDate.ToString("dd MMM yyyy")</td>
                     <td>@lease.LeaseEndDate.ToString("dd MMM yyyy")</td>
-                    <td>R @lease.MonthlyRent.ToString("N2")</td>
+                    <td>R&nbsp;@lease.MonthlyRent.ToString("N2")</td>
                     <td>@Html.Partial("~/Views/Leases/_LeaseStatusBadge.cshtml", lease.LeaseStatus)</td>
                 </tr>
             }

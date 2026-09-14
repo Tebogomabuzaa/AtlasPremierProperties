@@ -28,7 +28,7 @@
     </div>
     <div class="kpi">
         <span class="kpi-icon gold">@Html.Partial("_Icon", "trending")</span>
-        <div class="kpi-value">R @Model.TotalMonthlyRent.ToString("N0")</div>
+        <div class="kpi-value">R&nbsp;@Model.TotalMonthlyRent.ToString("N0")</div>
         <div class="kpi-label">Total monthly rent</div>
     </div>
 </div>
@@ -54,7 +54,7 @@
                     <tr>
                         <td>@property.PropertyDescription</td>
                         <td>@property.PhysicalAddress</td>
-                        <td>R @property.MonthlyRent.ToString("N0")</td>
+                        <td>R&nbsp;@property.MonthlyRent.ToString("N0")</td>
                         <td>
                             @if (property.VacancyStatus)
                             {

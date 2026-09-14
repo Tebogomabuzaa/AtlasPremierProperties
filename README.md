@@ -20,6 +20,33 @@ Live site: https://d521aqku9szcv.cloudfront.net (when the server is running)
 | Settlements | Work out the owner's payout for a lease and generate a crypto payment invoice link. |
 | Reports | Co-host performance: each manager's occupancy rate over a date range. |
 
+## Screenshots
+
+The screenshots show fictional demo data.
+
+**Executive dashboard**
+
+![Executive dashboard with active leases, crypto settlements, properties, occupancy rate, recent activity and quick actions](docs/screenshots/dashboard.png)
+
+<table>
+  <tr>
+    <td width="50%"><strong>Tenants and KYC</strong><br><img src="docs/screenshots/tenants.png" alt="Tenant list with passport numbers, nationality, KYC status and Run KYC buttons"></td>
+    <td width="50%"><strong>Properties</strong><br><img src="docs/screenshots/properties.png" alt="Property list with address, owner, rent and vacancy status"></td>
+  </tr>
+  <tr>
+    <td><strong>Lease agreements</strong><br><img src="docs/screenshots/leases.png" alt="Lease list with property, tenant, manager, period, rent and status"></td>
+    <td><strong>Crypto settlement invoice</strong><br><img src="docs/screenshots/settlement.png" alt="Invoice form previewing gross rent, management fee and owner payout, with recent invoices"></td>
+  </tr>
+  <tr>
+    <td><strong>Co-host performance report</strong><br><img src="docs/screenshots/report.png" alt="Bar chart of occupancy rate by property manager with top performers in gold"></td>
+    <td><strong>Owner portal</strong><br><img src="docs/screenshots/owner-portal.png" alt="Owner portal showing an owner's properties, occupancy and total monthly rent"></td>
+  </tr>
+  <tr>
+    <td><strong>Staff sign-in</strong><br><img src="docs/screenshots/sign-in.png" alt="Staff sign-in page"></td>
+    <td><strong>Dashboard on a phone</strong><br><img src="docs/screenshots/dashboard-mobile.png" width="220" alt="Dashboard at phone width with the menu collapsed"></td>
+  </tr>
+</table>
+
 ## Business rules
 
 - **KYC**: a tenant is approved when they have a passport or ID number, a nationality and a declared monthly income of at least R5,000. Otherwise they are declined. This is a simulated check (`Services/KycService.cs`).

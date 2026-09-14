@@ -24,7 +24,7 @@
         <span class="kpi-arrow">@Html.Partial("_Icon", "arrow")</span>
         <div class="kpi-value">@Model.SettlementsThisMonth</div>
         <div class="kpi-label">Crypto Settlements This Month</div>
-        <div class="kpi-note">R @Model.PayoutsThisMonth.ToString("N2") to owners</div>
+        <div class="kpi-note">R&nbsp;@Model.PayoutsThisMonth.ToString("N2") to owners</div>
     </a>
     <a class="kpi" href="@Url.Action("Index", "Properties")">
         <span class="kpi-icon slate">@Html.Partial("_Icon", "properties")</span>
