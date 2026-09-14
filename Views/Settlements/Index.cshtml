@@ -52,11 +52,11 @@
                         <td>@Html.ActionLink("#" + item.LeaseID, "Details", "Leases", new { id = item.LeaseID }, null)</td>
                         <td class="text-nowrap">@item.SettlementDate.ToString("dd MMM yyyy")</td>
                         <td>@item.DaysOccupied</td>
-                        <td>R @item.GrossRent.ToString("N2")</td>
-                        <td>R @item.MaintenanceCosts.ToString("N2")</td>
-                        <td>R @item.NetAmount.ToString("N2")</td>
-                        <td>R @item.ManagementFee.ToString("N2")</td>
-                        <td><strong>R @item.OwnerPayout.ToString("N2")</strong></td>
+                        <td>R&nbsp;@item.GrossRent.ToString("N2")</td>
+                        <td>R&nbsp;@item.MaintenanceCosts.ToString("N2")</td>
+                        <td>R&nbsp;@item.NetAmount.ToString("N2")</td>
+                        <td>R&nbsp;@item.ManagementFee.ToString("N2")</td>
+                        <td><strong>R&nbsp;@item.OwnerPayout.ToString("N2")</strong></td>
                         <td class="actions">
                             @if (!string.IsNullOrEmpty(item.CryptoInvoiceLink))
                             {

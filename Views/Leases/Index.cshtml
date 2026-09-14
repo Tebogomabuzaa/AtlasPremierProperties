@@ -42,7 +42,7 @@
                         <td>@item.TenantName</td>
                         <td>@item.ManagerName</td>
                         <td class="text-nowrap">@item.LeaseStartDate.ToString("dd MMM yyyy") – @item.LeaseEndDate.ToString("dd MMM yyyy")</td>
-                        <td>R @item.MonthlyRent.ToString("N2")</td>
+                        <td>R&nbsp;@item.MonthlyRent.ToString("N2")</td>
                         <td>@Html.Partial("_LeaseStatusBadge", item.LeaseStatus)</td>
                         <td class="actions">
                             @Html.ActionLink("Details", "Details", new { id = item.LeaseID })<span class="sep">|</span>@Html.ActionLink("Edit", "Edit", new { id = item.LeaseID })<span class="sep">|</span>@Html.ActionLink("Delete", "Delete", new { id = item.LeaseID })

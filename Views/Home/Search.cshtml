@@ -31,7 +31,7 @@
                             <td>@Html.ActionLink(p.PhysicalAddress, "Edit", "Properties", new { id = p.PropertyID }, null)</td>
                             <td>@p.PropertyDescription</td>
                             <td>@p.OwnerName</td>
-                            <td>R @p.MonthlyRent.ToString("N2")</td>
+                            <td>R&nbsp;@p.MonthlyRent.ToString("N2")</td>
                         </tr>
                     }
                 </tbody>

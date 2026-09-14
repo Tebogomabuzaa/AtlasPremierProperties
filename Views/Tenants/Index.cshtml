@@ -53,7 +53,7 @@
                         <td>@item.PassportIDNumber</td>
                         <td>@item.Nationality</td>
                         <td><span class="badge @badge">@item.VerificationStatus</span></td>
-                        <td>R @item.DeclaredMonthlyIncome.ToString("N2")</td>
+                        <td>R&nbsp;@item.DeclaredMonthlyIncome.ToString("N2")</td>
                         <td class="actions">
                             @using (Html.BeginForm("RunKyc", "Tenants", new { id = item.TenantID }, FormMethod.Post, new { @class = "d-inline" }))
                             {
